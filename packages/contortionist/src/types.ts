@@ -1,7 +1,16 @@
-import { Tensor, TextGenerationPipeline, } from "@xenova/transformers";
-import { LlamaCPPResponse, } from "./llms/endpoint-llms/llama-cpp/types.js";
-import { LlamafilePrompt, NonStreamingLlamafileResponse, StreamingLlamafileResponse, } from "./llms/endpoint-llms/llamafile/types.js";
-import { LlamaCPPLLM, LlamafileLLM, } from "./llms/endpoint-llms/index.js";
+import {
+  type Tensor,
+  type TextGenerationPipeline,
+} from "@xenova/transformers";
+import {
+  type LlamaCPPPrompt,
+  type LlamaCPPResponse,
+} from "./llms/endpoint-llms/llama-cpp/types.js";
+import {
+  type LlamafilePrompt,
+  type NonStreamingLlamafileResponse,
+  type StreamingLlamafileResponse,
+} from "./llms/endpoint-llms/llamafile/types.js";
 
 export interface GenerationOutput {
   input_ids: Tensor;
@@ -24,26 +33,16 @@ export function modelIsProtocolDefinition<M extends ModelProtocol>(model: ModelD
   return typeof model === 'object' && 'endpoint' in model && model.endpoint !== undefined;
 }
 
-type Chunk<M extends ModelProtocol, S extends boolean> = M extends 'llama.cpp' ? LlamaCPPResponse : M extends 'llamafile' ? (S extends true ? StreamingLlamafileResponse : NonStreamingLlamafileResponse) : undefined;
-
-export type StreamCallback<C> = (opts: {
-  chunk: C;
-  partial: string
-}) => void;
-
-export interface InternalExecuteOptions<C, P = string> {
-  prompt: P;
+export interface InternalExecuteOptions {
   n: number;
-  grammar: string;
+  grammar?: string;
   stream: boolean;
-  callback?: StreamCallback<C>;
   signal: AbortSignal;
 }
-// export type Execute<M extends ModelProtocol, S extends boolean> = (opts: InternalExecuteOptions<M, S>) => Promise<string>;
 export interface ExternalExecuteOptions<M extends ModelProtocol, S extends boolean> {
   n?: number;
   stream?: S;
-  callback?: StreamCallback<Chunk<M, S>>;
+  callback?: Callback<M, S>;
   signal?: AbortSignal;
 }
 export const DEFAULT_N = 20;
@@ -53,5 +52,22 @@ export interface ConstructorOptions<M extends ModelProtocol | undefined> {
   model?: ModelDefinition<M>;
 }
 
-export type Prompt<M extends ModelProtocol> = M extends 'llama.cpp' ? string : M extends 'llamafile' ? LlamafilePrompt : string;
-export type ChosenLLM<M extends ModelProtocol> = M extends 'llama.cpp' ? LlamaCPPLLM : LlamafileLLM;
+export type Prompt<M extends ModelProtocol> = M extends 'llama.cpp' ? LlamaCPPPrompt : M extends 'llamafile' ? LlamafilePrompt : string;
+
+export type Callback<M extends 'llamafile' | 'llama.cpp', S extends boolean | undefined> = (obj: {
+  partial: string;
+  chunk: M extends 'llamafile' ?
+  (S extends true ? StreamingLlamafileResponse : NonStreamingLlamafileResponse)
+  : LlamaCPPResponse;
+}) => void;
+
+export interface ILLM {
+  execute<S extends boolean>(obj: {
+    prompt: Prompt<ModelProtocol>;
+    stream: boolean;
+    callback?: Callback<ModelProtocol, S>;
+    n: number;
+    grammar?: string;
+    signal: AbortSignal;
+  }): void;
+}

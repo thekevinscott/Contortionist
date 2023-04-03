@@ -1,7 +1,12 @@
-import { InternalExecuteOptions, } from "../../../types.js";
+import { Callback, InternalExecuteOptions, } from "../../../types.js";
 
 export type LlamafilePrompt = string | Message[];
-export type LlamafileExecuteOptions = InternalExecuteOptions<StreamingLlamafileResponse | NonStreamingLlamafileResponse, LlamafilePrompt>;
+
+export interface LlamafileExecuteOptions<S extends boolean> extends InternalExecuteOptions {
+  prompt: LlamafilePrompt;
+  callback: Callback<'llamafile', S>;
+
+}
 
 type Role = 'user' | 'assistant' | 'system';
 export interface Message {
