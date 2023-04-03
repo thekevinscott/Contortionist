@@ -40,6 +40,16 @@
   },
   "author": "Kevin Scott",
   "license": "MIT",
+  "keywords": [
+    "llm",
+    "llama.cpp",
+    "transformers.js",
+    "llamafile",
+    "llamacpp",
+    "transformersjs",
+    "gbnf",
+    "grammar"
+  ],
   "dependencies": {
     "@xenova/transformers": "^2.16.0",
     "gbnf": "latest"
