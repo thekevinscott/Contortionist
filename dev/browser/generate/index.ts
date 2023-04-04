@@ -1,3 +1,5 @@
+import { pipeline } from '@xenova/transformers';
+// import { PreTrainedModel, TextGenerationConfig, TextGenerationPipeline, } from "@xenova/transformers";
 import Contortionist from '../../../packages/contortionist/src/index.js';
 import '@vanillawc/wc-monaco-editor';
 const grammars = import.meta.glob('./grammars/*.gbnf', {
@@ -6,12 +8,14 @@ const grammars = import.meta.glob('./grammars/*.gbnf', {
   import: 'default',
 });
 
-const model = {
-  // protocol: 'llama.cpp',
-  // endpoint: import.meta.env.VITE_LLAMACPP_ENDPOINT_URL,
-  protocol: 'llamafile',
-  endpoint: import.meta.env.VITE_LLAMAFILE_ENDPOINT_URL,
-};
+// const model = {
+//   // protocol: 'llama.cpp',
+//   // endpoint: import.meta.env.VITE_LLAMACPP_ENDPOINT_URL,
+//   protocol: 'llamafile',
+//   endpoint: import.meta.env.VITE_LLAMAFILE_ENDPOINT_URL,
+// };
+const model = pipeline('text-generation', 'Xenova/gpt2');
+
 
 const form = document.getElementById('form');
 const button = document.getElementById('submit');

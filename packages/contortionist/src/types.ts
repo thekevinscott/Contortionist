@@ -1,5 +1,4 @@
 import {
-  type Tensor,
   type TextGenerationPipeline,
 } from "@xenova/transformers";
 import {
@@ -11,15 +10,10 @@ import {
   type NonStreamingLlamafileResponse,
   type StreamingLlamafileResponse,
 } from "./llms/endpoint-llms/llamafile/types.js";
+import { TransformersJSResponse, } from "./llms/js-llms/transformersjs-llm/types.js";
 
-export interface GenerationOutput {
-  input_ids: Tensor;
-  attention_mask: unknown;
-}
 
-export type OutputTokenIds = number[][];
-
-export type ModelProtocol = 'llama.cpp' | 'llamafile';
+export type ModelProtocol = 'llama.cpp' | 'llamafile' | 'transformers.js';
 
 export interface ModelProtocolDefinition<M extends ModelProtocol> {
   endpoint: string;
@@ -52,13 +46,21 @@ export interface ConstructorOptions<M extends ModelProtocol | undefined> {
   model?: ModelDefinition<M>;
 }
 
-export type Prompt<M extends ModelProtocol> = M extends 'llama.cpp' ? LlamaCPPPrompt : M extends 'llamafile' ? LlamafilePrompt : string;
+export type Prompt<M extends ModelProtocol> = M extends 'llama.cpp'
+  ? LlamaCPPPrompt
+  : M extends 'llamafile'
+  ? LlamafilePrompt
+  : string;
 
-export type Callback<M extends 'llamafile' | 'llama.cpp', S extends boolean | undefined> = (obj: {
+export type Callback<M extends ModelProtocol, S extends boolean | undefined> = (obj: {
   partial: string;
   chunk: M extends 'llamafile' ?
   (S extends true ? StreamingLlamafileResponse : NonStreamingLlamafileResponse)
-  : LlamaCPPResponse;
+  : M extends 'llama.cpp' ?
+  LlamaCPPResponse
+  : M extends 'transformers.js' ?
+  TransformersJSResponse
+  : never;
 }) => void;
 
 export interface ILLM {

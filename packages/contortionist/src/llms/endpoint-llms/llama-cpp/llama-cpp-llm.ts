@@ -4,7 +4,7 @@ import { parseChunk, } from './parse-chunk.js';
 import { isError, } from "./is-error.js";
 import { parse, } from "./parse.js";
 import { buildResponse, } from "./build-response.js";
-import { ILLM, } from "../../../types.js";
+import type { ILLM, } from "../../../types.js";
 export class LlamaCPPLLM implements ILLM {
   endpoint: string;
   constructor(endpoint: string) {

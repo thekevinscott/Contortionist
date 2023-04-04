@@ -1,7 +1,7 @@
 import { Callback, InternalExecuteOptions, } from "../../../types.js";
 export interface LlamaCPPExecuteOptions<S extends boolean> extends InternalExecuteOptions {
   prompt: LlamaCPPPrompt;
-  callback: Callback<'llama.cpp', S>;
+  callback?: Callback<'llama.cpp', S>;
 }
 
 export type LlamaCPPPrompt = string;

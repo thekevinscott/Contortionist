@@ -4,8 +4,7 @@ export type LlamafilePrompt = string | Message[];
 
 export interface LlamafileExecuteOptions<S extends boolean> extends InternalExecuteOptions {
   prompt: LlamafilePrompt;
-  callback: Callback<'llamafile', S>;
-
+  callback?: Callback<'llamafile', S>;
 }
 
 type Role = 'user' | 'assistant' | 'system';
