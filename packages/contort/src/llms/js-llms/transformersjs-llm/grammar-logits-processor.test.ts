@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 import { Tensor } from './types.js';
-import { LogitsProcessor } from './logits-processor.js';
+import { GrammarLogitsProcessor } from './grammar-logits-processor.js';
 import { makeMockTokenizer, } from './__fixtures__/mock-tokenizer.js';
 import { makeMockVocabTrie, } from './__fixtures__/mock-vocab-trie.js';
 
@@ -23,7 +23,7 @@ describe('LogitsProcessor', () => {
   it('initializes', () => {
     const tokenizer = makeMockTokenizer();
     const vocabTrie = makeMockVocabTrie();
-    const logitsProcessor = new LogitsProcessor({
+    const logitsProcessor = new GrammarLogitsProcessor({
       prompt: 'foo',
       grammar: null,
     }, {
@@ -37,7 +37,7 @@ describe('LogitsProcessor', () => {
     const tokenizer = makeMockTokenizer();
     const vocabTrie = makeMockVocabTrie();
     const grammar = 'grammar';
-    new LogitsProcessor({
+    new GrammarLogitsProcessor({
       prompt: 'foo',
       grammar,
     }, {
@@ -48,68 +48,6 @@ describe('LogitsProcessor', () => {
   });
 
   describe('processors', () => {
-    it('calls the callback with the decoded input tokens', () => {
-      const callback = vi.fn();
-      const decode = vi.fn().mockImplementation((arg) => `i${arg[0]}`);
-      const tokenizer = makeMockTokenizer({
-        decode,
-      });
-      const vocabTrie = makeMockVocabTrie();
-      const logitsProcessor = new LogitsProcessor({
-        prompt: 'foo',
-        grammar: null,
-        callback,
-      }, {
-        tokenizer,
-        vocabTrie,
-      });
-
-      let i = 0;
-      for (let i = 0; i < 3; i++) {
-        for (const processor of logitsProcessor) {
-          processor([i], {
-            i,
-          } as unknown as Tensor);
-        }
-      }
-      for (let i = 0; i < 3; i++) {
-        expect(decode).toHaveBeenCalledWith([i])
-        expect(callback).toHaveBeenCalledWith({
-          partial: `i${i}`,
-          chunk: {
-            inputTokens: [i],
-            logits: {
-              i,
-            },
-          }
-        });
-      }
-    });
-
-    it('returns logits unadulterated if no grammar is provided', () => {
-      const decode = vi.fn();
-      const tokenizer = makeMockTokenizer({
-        decode,
-      });
-      const vocabTrie = makeMockVocabTrie();
-      const logitsProcessor = new LogitsProcessor({
-        prompt: 'foo',
-        grammar: null,
-      }, {
-        tokenizer,
-        vocabTrie,
-      });
-
-      let returnValue;
-      const logits = {
-        i: 0,
-      } as unknown as Tensor;
-      for (const processor of logitsProcessor) {
-        returnValue = processor([0], logits);
-      }
-      expect(returnValue).toEqual(logits);
-    });
-
     it('returns modified logits for a given grammar', () => {
       const decode = vi.fn().mockImplementation(() => {
         return 'bar';
@@ -137,7 +75,7 @@ describe('LogitsProcessor', () => {
       const vocabTrie = makeMockVocabTrie({
         getTokens,
       });
-      const logitsProcessor = new LogitsProcessor({
+      const logitsProcessor = new GrammarLogitsProcessor({
         prompt: 'foo',
         grammar: 'grammar',
       }, {

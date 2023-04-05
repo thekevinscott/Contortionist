@@ -1,4 +1,6 @@
-import { pipeline } from '@xenova/transformers';
+import { pipeline, env } from '@xenova/transformers';
+env.allowRemoteModels = true;
+env.allowLocalModels = false;
 // import { PreTrainedModel, TextGenerationConfig, TextGenerationPipeline, } from "@xenova/transformers";
 import Contortionist from '../../../packages/contort/src/index.js';
 import '@vanillawc/wc-monaco-editor';
@@ -14,7 +16,11 @@ const grammars = import.meta.glob('./grammars/*.gbnf', {
 //   protocol: 'llamafile',
 //   endpoint: import.meta.env.VITE_LLAMAFILE_ENDPOINT_URL,
 // };
+// debugger;
 const model = pipeline('text-generation', 'Xenova/gpt2');
+// const model = pipeline('text-generation', 'Xenova/phi-1_5_dev');
+// const model = pipeline('text-generation', 'BricksDisplay/phi-1_5-q4');
+// const model = pipeline('text-generation', 'Xenova/tiny-random-PhiForCausalLM');
 
 
 const form = document.getElementById('form');
@@ -44,22 +50,28 @@ form.onsubmit = async (e) => {
 };
 
 const synthesize = async (prompt: string) => {
-  const contortionist = new Contortionist({
-    grammar: grammar.getAttribute('value'),
-    model,
-  });
-
+  console.log('Synthesize!');
   button.setAttribute('disabled', '');
-  await contortionist.execute(prompt, {
-    n: 400,
-    stream: true,
-    callback: ({ partial }) => {
-      output.textContent = partial;
-    }
-  });
+  try {
+    const contortionist = new Contortionist({
+      grammar: grammar.getAttribute('value'),
+      model,
+    });
+
+    await contortionist.execute(prompt, {
+      n: 10,
+      stream: true,
+      callback: ({ partial, chunk }) => {
+        console.log(partial, chunk);
+        output.textContent = partial;
+      }
+    });
+  } catch (err) {
+    console.error(err);
+  }
 
   button.removeAttribute('disabled');
   abortController = new AbortController();
 };
 
-synthesize(input.value);
+// synthesize(input.value);
