@@ -1,5 +1,5 @@
-import {
-  type TextGenerationPipeline,
+import type {
+  TextGenerationPipeline,
 } from "@xenova/transformers";
 import {
   type LlamaCPPPrompt,
@@ -12,7 +12,6 @@ import {
 } from "./llms/endpoint-llms/llamafile/types.js";
 import { TransformersJSResponse, } from "./llms/js-llms/transformersjs/types.js";
 
-
 export type ModelProtocol = 'llama.cpp' | 'llamafile' | 'transformers.js';
 
 export interface ModelProtocolDefinition<M extends ModelProtocol> {
@@ -22,10 +21,6 @@ export interface ModelProtocolDefinition<M extends ModelProtocol> {
 
 export type ModelDefinition<M extends ModelProtocol | undefined> = ModelProtocolDefinition<M> | TextGenerationPipeline | Promise<TextGenerationPipeline>;
 export type Grammar = string;
-
-export function modelIsProtocolDefinition<M extends ModelProtocol>(model: ModelDefinition<M>): model is ModelProtocolDefinition<M> {
-  return typeof model === 'object' && 'endpoint' in model && model.endpoint !== undefined;
-}
 
 export interface InternalExecuteOptions {
   n: number;

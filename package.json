@@ -7,7 +7,7 @@
     "url": "https://github.com/thekevinscott/codesynth.git"
   },
   "scripts": {
-    "test": "vitest --config ./vitest.config.ts"
+    "test": "vitest --config ./vitest.config.ts --pool=forks"
   },
   "wireit": {},
   "keywords": [],
@@ -18,13 +18,15 @@
   },
   "devDependencies": {
     "@schemastore/package": "^0.0.10",
+    "@types/fs-extra": "^11.0.4",
     "@types/jest": "^29.5.12",
     "@xenova/transformers": "^2.16.1",
     "cors": "^2.8.5",
     "express": "^4.19.2",
+    "fs-extra": "^11.2.0",
     "playwright": "^1.43.0",
     "rimraf": "^5.0.5",
-    "testeroni": "^0.0.17",
+    "testeroni": "^0.1.0",
     "tslib": "^2.6.2",
     "typescript": "^5.3.3",
     "vitest": "^1.4.0",

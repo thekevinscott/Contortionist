@@ -12,8 +12,13 @@
 
 import { rimraf } from "rimraf";
 import { chromium, } from 'playwright';
-import { makeTmpDir, ClientsideTestRunner, ServersideTestRunner, SupportedDriver, setLogLevel, } from 'testeroni';
+import { ClientsideTestRunner, ServersideTestRunner, SupportedDriver, setLogLevel, } from 'testeroni';
 import path from 'path';
+import {
+  exists,
+  mkdirp,
+  readdir,
+} from 'fs-extra';
 import * as url from 'url';
 import { main as contortionistUMDFilePath } from '../../packages/contort/package.json' assert { type: "json" };
 import { bundle } from "../utils/bundle-wrapper.js";
@@ -24,7 +29,7 @@ import {
 import MockLLMAPI from "../utils/mock-llm-api.js";
 import { makeLlamaCPPResponse } from "../__mocks__/mock-llama-cpp-response.js";
 
-setLogLevel('warn')
+setLogLevel('warn');
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 const ROOT = path.resolve(__dirname, '../..');
@@ -43,18 +48,21 @@ describe('llama.cpp', async () => {
   });
 
   describe('Node.js', async () => {
-    let outDir = await makeTmpDir(TMP);
+    const outDir = path.resolve(TMP, 'node');
     const nodeRunner = new ServersideTestRunner({
       cwd: outDir,
       module: true,
     });
 
     beforeAll(async function beforeAll() {
-      await nodeRunner.beforeAll(() => bundle('node', outDir, {
-        dependencies: {
-          'contort': 'workspace:*',
-        }
-      }));
+      await mkdirp(outDir);
+      await nodeRunner.beforeAll(async () => {
+        await bundle('node', outDir, {
+          dependencies: {
+            'contort': 'workspace:*',
+          }
+        });
+      });
     });
 
     afterAll(() => Promise.all([
@@ -73,7 +81,7 @@ describe('llama.cpp', async () => {
       });
       ${script}
     `;
-      return nodeRunner.run(wrappedScript);
+      return await nodeRunner.run(wrappedScript);
     };
 
     test('it should return a non-streaming response', async () => {
@@ -149,6 +157,7 @@ describe('llama.cpp', async () => {
     });
   });
 
+
   describe('Browser', () => {
     describe.each([
       ['umd', 'Contortionist', {
@@ -165,8 +174,9 @@ describe('llama.cpp', async () => {
         }
       }],
 
-    ])('%s', async (bundlerName, key, bundleOptions) => {
-      let outDir = await makeTmpDir(TMP);
+    ])('%s', async (bundlerName, windowContortName, bundleOptions) => {
+      const browserDir = path.resolve(TMP, 'browser');
+      const outDir = path.resolve(browserDir, bundlerName);
 
       const browserRunner = new ClientsideTestRunner({
         log: false,
@@ -176,13 +186,16 @@ describe('llama.cpp', async () => {
       });
 
       beforeAll(async function beforeAll() {
+        await mkdirp(outDir);
         await browserRunner.beforeAll(() => bundle(bundlerName, outDir, bundleOptions));
       });
 
-      afterAll(() => Promise.all([
-        rimraf(outDir),
-        browserRunner.afterAll(),
-      ]));
+      afterAll(async () => {
+        await Promise.all([
+          rimraf((await readdir(browserDir)).length > 1 ? outDir : browserDir),
+          browserRunner.afterAll(),
+        ]);
+      });
 
       beforeEach(async function beforeEach() {
         await browserRunner.beforeEach();
@@ -199,7 +212,8 @@ describe('llama.cpp', async () => {
         const { endpoint, mockLLMAPI } = configureNonStreamingServer(content);
         _mockLLMAPI = mockLLMAPI;
         const result = await browserRunner.page.evaluate(({ endpoint, n, key }) => {
-          const contortionist = new window[key]({
+          const Contort = window[key] as unknown as new (config: any) => any;
+          const contortionist = new Contort({
             model: {
               protocol: 'llama.cpp',
               endpoint,
@@ -208,7 +222,7 @@ describe('llama.cpp', async () => {
           return contortionist.execute('prompt', {
             n,
           });
-        }, { endpoint, n, key, });
+        }, { endpoint, n, key: windowContortName, });
 
         expect(result).toEqual(content);
       });
@@ -221,7 +235,8 @@ describe('llama.cpp', async () => {
         const { endpoint, mockLLMAPI } = configureStreamingServer(content, n);
         _mockLLMAPI = mockLLMAPI;
         const result = await browserRunner.page.evaluate(({ endpoint, n, key }) => {
-          const contortionist = new window[key]({
+          const Contort = window[key] as unknown as new (config: any) => any;
+          const contortionist = new Contort({
             model: {
               protocol: 'llama.cpp',
               endpoint,
@@ -231,7 +246,7 @@ describe('llama.cpp', async () => {
             n,
             stream: true,
           });
-        }, { endpoint, n, key, });
+        }, { endpoint, n, key: windowContortName, });
         expect(result).toEqual(content);
       });
 
@@ -241,7 +256,8 @@ describe('llama.cpp', async () => {
         const { endpoint, mockLLMAPI } = configureStreamingServer(content, n);
         _mockLLMAPI = mockLLMAPI;
         const result = await browserRunner.page.evaluate(async ({ endpoint, n, key }) => {
-          const contortionist = new window[key]({
+          const Contort = window[key] as unknown as new (config: any) => any;
+          const contortionist = new Contort({
             model: {
               protocol: 'llama.cpp',
               endpoint,
@@ -256,19 +272,18 @@ describe('llama.cpp', async () => {
             },
           });
           return content;
-        }, { endpoint, n, key, });
+        }, { endpoint, n, key: windowContortName, });
         expect(result).toEqual('aababc');
       });
 
       test('it should abort', async () => {
-
-
         const n = 3;
         const content = 'abc';
         const { endpoint, mockLLMAPI } = configureStreamingServer(content, n);
         _mockLLMAPI = mockLLMAPI;
         const result = await browserRunner.page.evaluate(async ({ endpoint, n, key }) => {
-          const contortionist = new window[key]({
+          const Contort = window[key] as unknown as new (config: any) => any;
+          const contortionist = new Contort({
             model: {
               protocol: 'llama.cpp',
               endpoint,
@@ -294,10 +309,9 @@ describe('llama.cpp', async () => {
           });
           await promise;
           return result;
-        }, { endpoint, n, key, });
+        }, { endpoint, n, key: windowContortName, });
         expect(result).toEqual('catch');
       });
     });
   });
 });
-
