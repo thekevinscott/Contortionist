@@ -15,7 +15,6 @@ import { chromium, } from 'playwright';
 import { ClientsideTestRunner, ServersideTestRunner, SupportedDriver, setLogLevel, } from 'testeroni';
 import path from 'path';
 import {
-  exists,
   mkdirp,
   readdir,
 } from 'fs-extra';
@@ -29,7 +28,7 @@ import {
 import MockLLMAPI from "../utils/mock-llm-api.js";
 import { makeLlamaCPPResponse } from "../__mocks__/mock-llama-cpp-response.js";
 
-setLogLevel('warn');
+setLogLevel('verbose');
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 const ROOT = path.resolve(__dirname, '../..');
@@ -60,14 +59,16 @@ describe('llama.cpp', async () => {
         await bundle('node', outDir, {
           dependencies: {
             'contort': 'workspace:*',
-          }
+          },
         });
       });
     });
 
-    afterAll(() => Promise.all([
-      rimraf(outDir),
-    ]));
+    afterAll(async () => {
+      return Promise.all([
+        rimraf(outDir),
+      ]);
+    });
 
     const runScript = async (script: string) => {
       const endpoint = `http://localhost:${_mockLLMAPI.port}/completion`;
@@ -156,7 +157,6 @@ describe('llama.cpp', async () => {
       `)).toEqual('catch');
     });
   });
-
 
   describe('Browser', () => {
     describe.each([

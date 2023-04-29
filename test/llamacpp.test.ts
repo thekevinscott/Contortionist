@@ -1,6 +1,6 @@
 import Contortionist, { LlamaCPPResponse } from "contort";
 import MockLLMAPI from "mock-llm-api";
-import { vi } from "vitest";
+import { vi, } from "vitest";
 
 const makeLlamaCPPResponse = (response: Partial<LlamaCPPResponse> = {}): LlamaCPPResponse => ({
   content: 'foobar',

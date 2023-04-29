@@ -7,13 +7,14 @@
     "url": "https://github.com/thekevinscott/codesynth.git"
   },
   "scripts": {
-    "test": "vitest --config ./vitest.config.ts --pool=forks"
+    "test": "vitest --config ./vitest.config.ts --pool=forks --bail 1"
   },
   "wireit": {},
   "keywords": [],
   "author": "Kevin Scott",
   "license": "MIT",
   "dependencies": {
+    "mock-llm-api": "workspace:*",
     "contort": "workspace:*"
   },
   "devDependencies": {

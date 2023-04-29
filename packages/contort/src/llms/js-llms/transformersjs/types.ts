@@ -1,6 +1,7 @@
 import type {
   Tensor as _Tensor,
   TextGenerationConfig,
+  TextGenerationPipeline,
 } from "@xenova/transformers";
 import type {
   Callback as _Callback,
@@ -12,12 +13,13 @@ import type { GrammarLogitsProcessor, } from "./grammar-logits-processor.js";
 export type Tensor<T = BigInt64Array> = {
   data: T;
 } & Omit<_Tensor, 'data'>;
+export type TransformersJSOpts = TextGenerationConfig & {
+  callback_function?: (beams: Beam[]) => void;
+};
 export type GenerateFn = (
   inputIds: Tensor,
   // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-  config: TextGenerationConfig & {
-    callback_function?: (beams: Beam[]) => void;
-  },
+  config: TransformersJSOpts,
   logitsProcessor: GrammarLogitsProcessor,
   options: { inputs_attention_mask: null | Tensor },
 ) => Promise<OutputTokenIds>;
@@ -58,6 +60,7 @@ export type Callback = _Callback<'transformers.js', null>;
 export interface TransformersJSExecuteOptions extends Omit<InternalExecuteOptions, 'stream'> {
   prompt: TransformersJSPrompt;
   callback: Callback;
+  llmOpts?: TransformersJSOpts;
 }
 
 export interface TransformersJSError {
@@ -79,3 +82,5 @@ export interface GenerationOutput {
 }
 
 export type OutputTokenIds = number[][];
+
+export type TransformersJSModelDefinition = TextGenerationPipeline;

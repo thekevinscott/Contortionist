@@ -6,9 +6,9 @@ import { LlamafileExecuteOptions, NonStreamingLlamafileResponse, StreamingLlamaf
 import { getContent, } from "./get-content.js";
 import { isError, } from "./is-error.js";
 import { getMessages, } from "./get-messages.js";
-import type { ILLM, } from "../../../types.js";
+import type { LLMInterface, } from "../../../types.js";
 
-export class LlamafileLLM implements ILLM {
+export class LlamafileLLM implements LLMInterface {
   endpoint: string;
   constructor(endpoint: string) {
     this.endpoint = endpoint;

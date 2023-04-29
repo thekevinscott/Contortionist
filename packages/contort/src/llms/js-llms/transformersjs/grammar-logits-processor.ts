@@ -30,7 +30,9 @@ export class GrammarLogitsProcessor {
       throw new Error('No input tokens provided');
     }
     const decoded = this.tokenizer.decode(inputTokens);
-    logits.data = maskLogits(logits.data, this.getAllowedTokenIds(decoded));
+    const allowedTokenIds = this.getAllowedTokenIds(decoded);
+    // console.log('allowedTokenIds', allowedTokenIds, [...allowedTokenIds,].map(tokenId => this.tokenizer.decode([tokenId,])));
+    logits.data = maskLogits(logits.data, allowedTokenIds);
     return logits;
   },];
 

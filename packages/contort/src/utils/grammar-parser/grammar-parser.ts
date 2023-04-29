@@ -4,7 +4,7 @@ import GBNF from "gbnf";
 import { GrammarParserNode, } from "./grammar-parser-node.js";
 import { BidirectionalMap, } from "../bidirectional-map.js";
 import type {
-  GetDecodedByteForChar,
+  // GetDecodedByteForChar,
   GetToken,
 } from "./types.js";
 
@@ -19,18 +19,20 @@ export class GrammarParser {
     vocabSize,
     stopTokenId,
     getToken,
-    getDecodedByteForChar,
+    // getDecodedByteForChar,
   }: {
     vocabSize: number,
     stopTokenId: number,
     getToken: GetToken;
-    getDecodedByteForChar: GetDecodedByteForChar;
+    // getDecodedByteForChar: GetDecodedByteForChar;
   }) {
     this.root = new GrammarParserNode(stopTokenId);
     for (let tokenId = 0; tokenId < vocabSize; tokenId++) {
       const token = getToken(tokenId);
       this.vocab.set(tokenId, token);
-      this.root.add(tokenId, token, getDecodedByteForChar);
+      this.root.add(tokenId, token
+        // , getDecodedByteForChar
+      );
     }
   }
 

@@ -7,7 +7,7 @@
   },
   "wireit": {
     "dev": {
-      "command": "vite --host --config ./vite.config.ts",
+      "command": "vite --host --config ./vite.config.ts --port 5172",
       "dependencies": []
     }
   },
@@ -15,6 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@mlc-ai/web-llm": "^0.2.35",
     "@vanillawc/wc-monaco-editor": "^1.10.15",
     "@xenova/transformers": "github:xenova/transformers.js"
   },
