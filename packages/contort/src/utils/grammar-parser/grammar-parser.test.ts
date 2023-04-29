@@ -1,40 +1,31 @@
-import { BidirectionalMap } from "../bidirectional-map";
-import { Trie } from "./trie";
-
-import { makeMockTextGenerationPipeline as _makeMockTextGenerationPipeline } from "../../__mocks__/mock-text-generation-pipeline";
+import { makeMockTextGenerationPipeline as _makeMockTextGenerationPipeline } from "../../llms/js-llms/transformersjs/__mocks__/mock-text-generation-pipeline.js";
 
 import GBNF from "gbnf";
-import type { Vocab } from "../types.js";
-import {
-  makeByteDecoder,
-} from "../../__mocks__/mock-pretrained-tokenizer.js";
+import { GrammarParser } from "./grammar-parser.js";
+import { BidirectionalMap } from "../bidirectional-map.js";
 
 const STOP_TOKEN_ID = -999;
 const STOP_TOKEN = '<|endoftext|>';
 
-// const decoder = tokenizer.decoder as ByteLevelDecoder;
-// const token = tokenizer.model.vocab[tokenId];
-// const decodedCodePoints: number[] = [...token,].map(char => parseInt(decoder.byte_decoder[char], 10));
-const makeMockTextGenerationPipeline = (vocab: string[]) => {
-  const byte_decoder = makeByteDecoder(vocab);
-  return _makeMockTextGenerationPipeline({
-    tokenizer: {
-      model: {
-        vocab,
-      },
-      decoder: {
-        byte_decoder,
-      }
-    }
-  });
-};
-
-const getVocab = (words: string[] = []): Vocab => {
-  const vocab: Vocab = new BidirectionalMap();
-  for (let i = 0; i < words.length; i++) {
-    vocab.set(i, words[i]);
+export const makeByteDecoder = (vocab: string[]) => vocab.reduce<Record<string, number>>((_acc, word) => [...word].reduce<Record<string, number>>((acc, char) => {
+  const codePoint = char.codePointAt(0);
+  if (codePoint === undefined) {
+    throw new Error(`Could not get code point for ${char}`);
   }
-  return vocab;
+  return {
+    ...acc,
+    [char]: codePoint,
+  };
+}, _acc), {});
+
+const buildOptsForWords = (words: string[]) => {
+  const byte_decoder = makeByteDecoder(words);
+  return {
+    stopTokenId: STOP_TOKEN_ID,
+    vocabSize: words.length,
+    getToken: tokenId => words[tokenId],
+    getDecodedByteForChar: (char) => byte_decoder[char],
+  };
 };
 
 const getWordsOfIds = (arr: string[], ids: Set<number>) => {
@@ -49,11 +40,9 @@ const getWordsOfIds = (arr: string[], ids: Set<number>) => {
   return new Set(tokenIds);
 };
 
-describe('Trie', () => {
+describe('GrammarParser', () => {
   test('it instantiates', () => {
-    const vocab = getVocab();
-    const pipeline = makeMockTextGenerationPipeline([]);
-    new Trie(vocab, STOP_TOKEN_ID, pipeline);
+    new GrammarParser(buildOptsForWords([]));
   });
 
   describe('getTokensForParseState', () => {
@@ -99,9 +88,7 @@ describe('Trie', () => {
         ['-', '- '],
       ],
     ])('CHAR: %s, %s', (grammar, words, expected) => {
-      const pipeline = makeMockTextGenerationPipeline(words);
-      const vocab = getVocab(words);
-      const trie = new Trie(vocab, STOP_TOKEN_ID, pipeline);
+      const trie = new GrammarParser(buildOptsForWords(words))
       const parseState = GBNF(grammar);
       const tokens = trie.getTokens(parseState);
       expect(getWordsOfIds(words, tokens)).toEqual(new Set(expected));
@@ -119,18 +106,14 @@ describe('Trie', () => {
         ['a', 'b', 'c', 'd', 'e', 'f', 'a0', 'b0', 'c0', 'a01', 'a012', 'A', 'B', 'C', 'C012'],
       ],
     ])('RANGE: %s, %s', (grammar, words, expected) => {
-      const pipeline = makeMockTextGenerationPipeline(words);
-      const vocab = getVocab(words);
-      const trie = new Trie(vocab, STOP_TOKEN_ID, pipeline);
+      const trie = new GrammarParser(buildOptsForWords(words))
       const parseState = GBNF(grammar);
       expect(getWordsOfIds(words, trie.getTokens(parseState))).toEqual(new Set(expected));
     });
 
     test('END', () => {
       const words = ['foo'];
-      const pipeline = makeMockTextGenerationPipeline(words);
-      const vocab = getVocab(words);
-      const trie = new Trie(vocab, STOP_TOKEN_ID, pipeline);
+      const trie = new GrammarParser(buildOptsForWords(words))
       const parseState = GBNF(`root ::= "foo"`, 'foo');
       expect(getWordsOfIds(words, trie.getTokens(parseState))).toEqual(new Set([STOP_TOKEN]));
     });
@@ -146,9 +129,7 @@ describe('Trie', () => {
         [`root ::= [a-d]*`, ['a', 'b', 'c', 'd', STOP_TOKEN], 'abcd'],
       ])('%s, %s', (grammar, expected, initial) => {
         const words = ['a', 'b', 'c', 'd'];
-        const pipeline = makeMockTextGenerationPipeline(words);
-        const vocab = getVocab(words);
-        const trie = new Trie(vocab, STOP_TOKEN_ID, pipeline);
+        const trie = new GrammarParser(buildOptsForWords(words))
         const parseState = GBNF(grammar, initial);
         expect(getWordsOfIds(words, trie.getTokens(parseState))).toEqual(new Set(expected));
       });
@@ -168,9 +149,7 @@ describe('Trie', () => {
         [`root ::= [^a-c] | [d-f]`, ['d'], undefined],
       ])('%s, %s', (grammar, expected, initial) => {
         const words = ['a', 'b', 'c', 'd'];
-        const pipeline = makeMockTextGenerationPipeline(words);
-        const vocab = getVocab(words);
-        const trie = new Trie(vocab, STOP_TOKEN_ID, pipeline);
+        const trie = new GrammarParser(buildOptsForWords(words))
         const parseState = GBNF(grammar, initial);
         expect(getWordsOfIds(words, trie.getTokens(parseState))).toEqual(new Set(expected));
       });
@@ -178,9 +157,7 @@ describe('Trie', () => {
       test('it throws if no valid tokens exist', () => {
         const grammar = `root ::= [^abcd]`;
         const words = ['a', 'b', 'c', 'd'];
-        const pipeline = makeMockTextGenerationPipeline(words);
-        const vocab = getVocab(words);
-        const trie = new Trie(vocab, STOP_TOKEN_ID, pipeline);
+        const trie = new GrammarParser(buildOptsForWords(words))
         const parseState = GBNF(grammar);
         expect(() => trie.getTokens(parseState)).toThrow();
       });
@@ -193,10 +170,8 @@ describe('Trie', () => {
       [3, ['f', 'b', 'fo', 'ba', 'foo', 'bar']],
     ])('limits to a maximum depth of %i', (depth, expected) => {
       const words = ['f', 'fo', 'foo', 'b', 'ba', 'bar'];
-      const pipeline = makeMockTextGenerationPipeline(words);
       const grammar = `root ::= "foo" | "bar"`;
-      const vocab = getVocab(words);
-      const trie = new Trie(vocab, STOP_TOKEN_ID, pipeline);
+      const trie = new GrammarParser(buildOptsForWords(words))
       const parseState = GBNF(grammar);
       expect(getWordsOfIds(words, trie.getTokens(parseState, depth))).toEqual(new Set(expected));
     });
@@ -204,34 +179,32 @@ describe('Trie', () => {
     describe('Real world examples', () => {
       test.each([
         [
-          `root ::= item+\n item ::= "- " [^\\r]+ "\\n" `,
+          `root ::= item+\\n item ::= "- " [^\\r]+ "\\n" `,
           ['-', ' ', ' a', ' b', '\\r', '\\n', '\\x0b', '\\x0c', '\\x85', '\\u2028', '\\u2029', '\\n'],
           ['-'],
           '',
         ],
         [
-          `root ::= item+\n item ::= "- " [^\\r]+ "\\n" `,
+          `root ::= item+\\n item ::= "- " [^\\r]+ "\\n" `,
           ['-', ' ', ' a', ' b', '\\r', '\\n', '\\x0b', '\\x0c', '\\x85', '\\u2028', '\\u2029', '- a\\n', '- b\\n', '\\n'],
           ['-', '- a\\n', '- b\\n'],
           '',
         ],
         [
-          `root ::= item+\n item ::= "- " [^\\r]+ "\\n" `,
+          `root ::= item+\\n item ::= "- " [^\\r]+ "\\n" `,
           ['-', ' ', ' a', ' b', '\\r', '\\n', '\\x0b', '\\x0c', '\\x85', '\\u2028', '\\u2029', '- a\\n', '- b\\n', '\\n', '- a', '- b'],
           ['-', '- a\\n', '- b\\n', '- a', '- b'],
           '',
         ],
         [
-          `root ::= item+\n item ::= "- " [^\\r]+ "\\n" `,
+          `root ::= item+\\n item ::= "- " [^\\r]+ "\\n" `,
           ['-', ' ', ' a', ' b', '\\r', '\\n', '\\x0b', '\\x0c', '\\x85', '\\u2028', '\\u2029', '- a\\n', '- b\\n', '\\n', '- a', '- b'],
           [' ', ' a', ' b'],
           '-',
         ],
       ])('%s, %s', (grammar, words, expected, initial) => {
-        const pipeline = makeMockTextGenerationPipeline(words);
-        const vocab = getVocab(words);
-        const trie = new Trie(vocab, STOP_TOKEN_ID, pipeline);
-        const parseState = GBNF(grammar, initial);
+        const trie = new GrammarParser(buildOptsForWords(words))
+        const parseState = GBNF(grammar.split('\\n').join('\n'), initial);
         expect(getWordsOfIds(words, trie.getTokens(parseState))).toEqual(new Set(expected));
       });
 

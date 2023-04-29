@@ -3,12 +3,12 @@ import { GrammarLogitsProcessor } from './grammar-logits-processor.js';
 import { makeMockPretrainedTokenizer, } from './__mocks__/mock-pretrained-tokenizer.js';
 import { makeMockGrammarParser, } from './__mocks__/mock-grammar-parser.js';
 
-import type { Tensor } from '@xenova/transformers';
-import { maskLogits } from './mask-logits.js';
-import * as _maskLogits from './mask-logits.js';
+import * as _maskLogits from '../../../utils/mask-logits.js';
+import { maskLogits } from '../../../utils/mask-logits.js';
+import { Tensor } from './types.js';
 
-vi.mock('./mask-logits.js', async () => {
-  const actual = await vi.importActual('./mask-logits.js') as typeof _maskLogits;
+vi.mock('../../../utils/mask-logits.js', async () => {
+  const actual = await vi.importActual('../../../utils/mask-logits.js') as typeof _maskLogits;
   return {
     ...actual,
     maskLogits: vi.fn().mockImplementation(actual.maskLogits),
@@ -76,68 +76,68 @@ describe('LogitsProcessor', () => {
     const logitsProcessor = new GrammarLogitsProcessor(prompt, parser, tokenizer);
     let returnValue;
     let logits = {
-      data: Array(vocab.length).fill(1),
-    } as unknown as Tensor;
+      data: new Float32Array(vocab.length).fill(1),
+    } as unknown as Tensor<Float32Array>;
     for (const processor of logitsProcessor) {
       returnValue = processor([0], logits);
     }
     expect(decode).toHaveBeenCalledWith([0]);
     expect(addToken).toHaveBeenCalledWith('');
     expect(logitsProcessor.lastLen).toBe(1);
-    expect(maskLogits).toHaveBeenCalledWith(logits, new Set([1]));
+    expect(maskLogits).toHaveBeenCalledWith(logits.data, new Set([1]));
     expect(returnValue).toEqual({
-      data: [
+      data: new Float32Array([
         -Infinity,
         1,
         -Infinity,
         -Infinity,
         -Infinity,
         -Infinity,
-      ]
+      ])
     });
 
     // next character: "b"
     logits = {
-      data: Array(vocab.length).fill(1),
-    } as unknown as Tensor;
+      data: new Float32Array(vocab.length).fill(1),
+    } as unknown as Tensor<Float32Array>;
     for (const processor of logitsProcessor) {
       returnValue = processor([0, 1], logits);
     }
     expect(decode).toHaveBeenCalledWith([0, 1]);
     expect(addToken).toHaveBeenCalledWith('b');
     expect(logitsProcessor.lastLen).toBe(2);
-    expect(maskLogits).toHaveBeenCalledWith(logits, new Set([2]));
+    expect(maskLogits).toHaveBeenCalledWith(logits.data, new Set([2]));
     expect(returnValue).toEqual({
-      data: [
+      data: new Float32Array([
         -Infinity,
         -Infinity,
         1,
         -Infinity,
         -Infinity,
         -Infinity,
-      ]
+      ])
     });
 
     // next character: "c"
     logits = {
-      data: Array(vocab.length).fill(1),
-    } as unknown as Tensor;
+      data: new Float32Array(vocab.length).fill(1),
+    } as unknown as Tensor<Float32Array>;
     for (const processor of logitsProcessor) {
       returnValue = processor([0, 1, 2], logits);
     }
     expect(decode).toHaveBeenCalledWith([0, 1, 2]);
     expect(addToken).toHaveBeenCalledWith('c');
     expect(logitsProcessor.lastLen).toBe(3);
-    expect(maskLogits).toHaveBeenCalledWith(logits, new Set([3]));
+    expect(maskLogits).toHaveBeenCalledWith(logits.data, new Set([3]));
     expect(returnValue).toEqual({
-      data: [
+      data: new Float32Array([
         -Infinity,
         -Infinity,
         -Infinity,
         1,
         -Infinity,
         -Infinity,
-      ]
+      ])
     });
   });
 });

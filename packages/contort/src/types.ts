@@ -10,7 +10,7 @@ import {
   type NonStreamingLlamafileResponse,
   type StreamingLlamafileResponse,
 } from "./llms/endpoint-llms/llamafile/types.js";
-import { TransformersJSResponse, } from "./llms/js-llms/transformersjs-llm/types.js";
+import { TransformersJSResponse, } from "./llms/js-llms/transformersjs/types.js";
 
 
 export type ModelProtocol = 'llama.cpp' | 'llamafile' | 'transformers.js';

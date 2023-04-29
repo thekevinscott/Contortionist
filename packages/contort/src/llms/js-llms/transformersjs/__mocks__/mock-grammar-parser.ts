@@ -1,7 +1,7 @@
 import { vi, } from 'vitest';
 import type { TokenizeFn, } from "../types.js";
 import { Callable, } from './callable.js';
-import type { AddToken, GetNextTokenIds, GrammarParser } from '../grammar-parser/grammar-parser.js';
+import type { AddToken, GetNextTokenIds, GrammarParser } from '../../../../utils/grammar-parser/grammar-parser.js';
 
 export interface MockGrammarParserArgs {
   getNextTokenIds?: GetNextTokenIds;

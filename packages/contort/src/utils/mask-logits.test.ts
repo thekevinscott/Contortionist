@@ -1,5 +1,4 @@
 import { maskLogits } from './mask-logits.js';
-import { Tensor } from './types.js';
 
 describe('maskLogits', () => {
   test.each([
@@ -24,12 +23,8 @@ describe('maskLogits', () => {
       [-Infinity, -Infinity, -Infinity, -Infinity, -Infinity]
     ],
   ])('it masks logits %s', (allowedTokenIds, expectation) => {
-    const logits = {
-      data: new Float32Array(5).fill(0).map((_, i) => i),
-    };
+    const logits = new Float32Array(5).fill(0).map((_, i) => i);
 
-    expect(maskLogits(logits as Tensor<Float32Array>, allowedTokenIds)).toEqual({
-      data: new Float32Array(expectation),
-    });
+    expect(maskLogits(logits, new Set(allowedTokenIds))).toEqual(new Float32Array(expectation));
   });
 });
