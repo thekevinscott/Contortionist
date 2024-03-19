@@ -1,0 +1,68 @@
+{
+  "name": "contortionist",
+  "type": "module",
+  "version": "0.0.1",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "test": "wireit",
+    "larkgenpython": "lark-js ./src/parsers/lark-parser/grammars/python/python.lark -o ./src/parsers/lark-parser/grammars/python/python-parser.js",
+    "lark-gen-json": "lark-js ./src/parsers/lark-parser/grammars/json/json.lark -o ./src/parsers/lark-parser/grammars/json/json-parser.js",
+    "genpython": "antlr4ng -Dlanguage=TypeScript -o ./src/parsers/antlr4-parser/grammars/Python3/generated -Xexact-output-dir -visitor ./src/parsers/antlr4-parser/grammars/Python3/Python3Lexer.g4 ./src/parsers/antlr4-parser/grammars/Python3/Python3Parser.g4",
+    "genkotlin": "antlr4ng -Dlanguage=TypeScript -o ./src/parsers/antlr4-parser/grammars/Kotlin/generated -Xexact-output-dir -visitor ./src/parsers/antlr4-parser/grammars/Kotlin/KotlinLexer.g4 ./src/parsers/antlr4-parser/grammars/Kotlin/KotlinParser.g4",
+    "genjs_backup": "antlr4ng -Dlanguage=TypeScript -o ./src/parsers/antlr4-parser/grammars/JavaScript/generated -Xexact-output-dir -visitor ./src/parsers/antlr4-parser/grammars/JavaScript/JavaScriptLexer.g4 ./src/parsers/antlr4-parser/grammars/JavaScript/JavaScriptParser.g4",
+    "genjs": "antlr4 -Dlanguage=JavaScript -o gen -o ./src/parsers/antlr4-parser/grammars/JavaScript/generated -Xexact-output-dir -visitor ./src/parsers/antlr4-parser/grammars/JavaScript/JavaScriptLexer.g4 ./src/parsers/antlr4-parser/grammars/JavaScript/JavaScriptParser.g4",
+    "genexpr": "antlr4ng -Dlanguage=TypeScript -o ./src/parsers/antlr4-parser/grammars/Expression/generated -Xexact-output-dir -visitor ./src/parsers/antlr4-parser/grammars/Expression/Expression.g4 ",
+    "compile": "antlr4 -Dlanguage=TypeScript Hello.g4 -o generated/",
+    "build": "wireit"
+  },
+  "wireit": {
+    "test": {
+      "command": "vitest"
+    },
+    "build": {
+      "command": "rimraf ./dist && rollup --config",
+      "files": [
+        "./src/**/*.json",
+        "./src/**/*.py",
+        "./src/**/*.ts",
+        "./src/**/*.js",
+        "package.json",
+        "tsconfig.json"
+      ],
+      "output": [
+        "./dist/**"
+      ]
+    }
+  },
+  "author": "Kevin Scott",
+  "license": "MIT",
+  "dependencies": {
+    "@mlc-ai/web-llm": "^0.2.23",
+    "@xenova/transformers": "^2.16.0",
+    "antlr4": "4.13.1-patch-1",
+    "antlr4-c3": "^3.4.1",
+    "antlr4ng": "^3.0.3",
+    "gpt-tokenizer": "^2.1.2",
+    "openai": "^4.28.4",
+    "pyodide": "^0.25.0",
+    "web-tree-sitter": "^0.21.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/jest": "^29.5.12",
+    "rimraf": "^5.0.5",
+    "rollup": "^4.12.1",
+    "rollup-plugin-dts": "^6.1.0",
+    "rollup-plugin-esbuild": "^6.1.1",
+    "rollup-plugin-string": "^3.0.0",
+    "ts-node": "^8.8.2",
+    "tslib": "^2.6.2",
+    "typescript": "^5.3.3",
+    "vitest": "^1.3.1"
+  }
+}

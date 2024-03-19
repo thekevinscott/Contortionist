@@ -1,0 +1,130 @@
+import { AbstractLLM, Execute } from "../abstract-llm.js";
+import { BuildOpts, Opts } from "./types.js";
+
+
+interface LLMCallOpts {
+  stream?: boolean;
+  n?: number;
+  grammar?: string;
+  messages: { content: string; role: string; }[];
+}
+
+const parseStream = async (protocol: LLMProtocol, response: Response) => {
+  if (!response.ok) {
+    throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+
+  let content = '';
+  let previousChunk = '';
+  while (true) {
+    const { done, value } = await reader.read();
+    const chunk = decoder.decode(value, { stream: true });
+    try {
+      if (chunk === '') {
+        console.log('done!')
+        return content;
+
+      }
+      const parsedChunk = JSON.parse(previousChunk + chunk.split('data:').pop().trim());
+      previousChunk = '';
+      const parsedResult = parseResult(protocol, parsedChunk, true);
+      content += parsedResult;
+      console.log(content);
+      if (done) {
+        console.log('done!')
+        return content;
+      }
+    } catch (err) {
+      previousChunk += chunk.split('data:').pop().trim();
+      // console.log('previousChunk', previousChunk)
+      // console.log('error', err);
+      // console.log('chunk that caused the error', chunk);
+      // debugger;
+    }
+  }
+};
+
+interface Opts {
+  protocol: LLMProtocol;
+  endpoint: string;
+}
+
+class LLM {
+  private protocol: LLMProtocol;
+  private endpoint: string;
+  constructor(opts: Opts) {
+    this.protocol = opts.protocol;
+    this.endpoint = opts.endpoint;
+  }
+
+  call = async (opts: LLMCallOpts) => {
+    const stream = opts.stream;
+
+    const response = await fetch(this.endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(prepareOpts(this.protocol, opts))
+    });
+
+    if (stream) {
+      return parseStream(this.protocol, response);
+    }
+
+    const result = await response.json();
+    return parseResult(this.protocol, result);
+  };
+}
+
+const prepareOpts = (protocol: LLMProtocol, opts: LLMCallOpts) => {
+  if (protocol === 'openai') {
+    return opts;
+  } else if (protocol === 'llama.cpp') {
+    return {
+      prompt: opts.messages[0].content,
+      n_predict: opts.n,
+      grammar: opts.grammar,
+      stream: opts.stream,
+    };
+  }
+  throw new Error('Unsupported protocol');
+};
+
+const parseResult = (protocol: LLMProtocol, result: any, streaming = false) => {
+  if (protocol === 'openai') {
+    if (streaming) {
+      return result.choices[0].delta.content;
+    }
+    return result.choices[0].message.content;
+  } else if (protocol === 'llama.cpp') {
+    return result.content;
+  }
+};
+
+export class EndpointLLM<R extends Record<string, any>> implements AbstractLLM {
+  endpoint: string;
+  constructor(endpoint: string) {
+    this.endpoint = endpoint;
+  };
+
+  buildOpts: BuildOpts<R> = () => ({} as any)
+
+  // call: Call = async (opts: LLMCallOpts) => { };
+
+  execute: Execute = async (opts: Opts) => {
+    const builtOpts = this.buildOpts(opts);
+
+    const response = await this.call({
+      stream: true,
+      grammar: CHESS_GRAMMAR,
+      n: 40,
+      messages,
+    });
+
+    return response;
+    return 'foo';
+  }
+}
+
