@@ -1,8 +1,12 @@
 {
-  "name": "@coder/root",
+  "name": "root",
   "private": true,
   "type": "module",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thekevinscott/contortionist.git"
+  },
   "scripts": {
     "dev": "wireit"
   },
