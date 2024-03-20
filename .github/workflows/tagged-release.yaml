@@ -1,4 +1,4 @@
-name: "tagged-release"
+name: Cut release from new tag
 
 on:
   push:

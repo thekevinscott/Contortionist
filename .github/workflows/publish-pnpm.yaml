@@ -1,7 +1,8 @@
-name: Publish Package to jsr
+name: Publish Package to npm
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - "v*"
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -38,7 +39,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - run: pnpx jsr publish
+      - run: pnpm publish --no-git-checks
         working-directory: ./packages/contortionist
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
