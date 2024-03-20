@@ -2,7 +2,7 @@
   "name": "contortionist",
   "type": "module",
   "version": "0.0.3",
-  "main": "./src/index.ts",
+  "main": "./dist/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/thekevinscott/contortionist.git"
@@ -44,15 +44,7 @@
   "author": "Kevin Scott",
   "license": "MIT",
   "dependencies": {
-    "@mlc-ai/web-llm": "^0.2.23",
-    "@xenova/transformers": "^2.16.0",
-    "antlr4": "4.13.1-patch-1",
-    "antlr4-c3": "^3.4.1",
-    "antlr4ng": "^3.0.3",
-    "gpt-tokenizer": "^2.1.2",
-    "openai": "^4.28.4",
-    "pyodide": "^0.25.0",
-    "web-tree-sitter": "^0.21.0"
+    "@xenova/transformers": "^2.16.0"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.6",
