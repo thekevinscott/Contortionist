@@ -1,5 +1,13 @@
 import { StreamCallback } from "../../types.js";
 
+interface CallerOpts {
+  prompt: string;
+  n_predict: number;
+  grammar: string;
+  stream: boolean;
+  signal: AbortSignal;
+}
+
 export class Caller<R> {
   endpoint: string;
   callback?: StreamCallback<R>;
@@ -8,11 +16,12 @@ export class Caller<R> {
     this.callback = callback;
   }
 
-  fetch = async (endpoint: string, opts: any) => {
+  fetch = async (endpoint: string, { signal, ...opts }: CallerOpts) => {
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(opts),
+      signal,
     });
 
     if (opts.stream) {

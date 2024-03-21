@@ -6,5 +6,5 @@
     "moduleResolution": "nodenext",
     "types": ["node", "vite/client"]
   },
-  "include": ["../../packages/contortionist/dev/browser/**/*.ts"]
+  "include": ["./**/*.ts"]
 }

@@ -8,20 +8,18 @@
   "wireit": {
     "dev": {
       "command": "vite --host --config ./vite.config.ts",
-      "dependencies": [
-        "../../packages/contortionist:build",
-        "../../packages/gbnf:build"
-      ]
+      "dependencies": []
     }
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@vanillawc/wc-monaco-editor": "^1.10.15",
     "@xenova/transformers": "github:xenova/transformers.js"
   },
   "devDependencies": {
-    "vite": "^5.1.4",
+    "vite": "^5.1.5",
     "vite-plugin-node-polyfills": "^0.21.0",
     "wireit": "^0.14.4"
   }

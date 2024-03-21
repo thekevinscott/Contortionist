@@ -1,12 +1,12 @@
 import { InternalExecuteOptions } from "../../types.js";
 import { Caller } from "./caller.js";
-import type { BuildOpts } from "./types.js";
 
 interface LlamaCPPCallOpts {
   prompt: string;
   n_predict: number;
   grammar: string;
   stream: boolean;
+  signal: AbortSignal;
 }
 
 interface LlamaCPPResponse {
@@ -103,11 +103,14 @@ export class LlamaCPPLLM {
     n,
     grammar,
     stream,
+    internalSignal,
+    externalSignal,
   }: InternalExecuteOptions<LlamaCPPResponse>): LlamaCPPCallOpts => ({
     prompt,
     n_predict: n,
     grammar,
     stream,
+    signal: externalSignal || internalSignal,
   })
 
   execute = async ({ streamCallback, ...opts }: InternalExecuteOptions<LlamaCPPResponse>) => {

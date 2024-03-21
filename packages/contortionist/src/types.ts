@@ -29,6 +29,8 @@ export interface InternalExecuteOptions<R> {
   grammar: string;
   stream: boolean;
   streamCallback?: StreamCallback<R>;
+  internalSignal: AbortSignal;
+  externalSignal?: AbortSignal;
 }
 export type Execute<R> = (opts: InternalExecuteOptions<R>) => Promise<string>;
 
@@ -36,6 +38,7 @@ export interface ExternalExecuteOptions<R> {
   n?: number;
   stream?: boolean;
   streamCallback?: StreamCallback<R>;
+  signal?: AbortSignal;
 }
 export const DEFAULT_N = 20;
 
