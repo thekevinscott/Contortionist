@@ -1,7 +1,7 @@
 import { getLLM, AbstractLLM, } from "./llms/index.js";
-import { ContortionistOptions, DEFAULT_N, ExternalExecuteOptions, Grammar } from "./types.js";
+import { ConstructorOptions, DEFAULT_N, ExternalExecuteOptions, Grammar, ModelProtocol } from "./types.js";
 
-export class Contortionist<R> {
+export class Contortionist<M extends ModelProtocol> {
   grammar: Grammar;
   llm: AbstractLLM;
 
@@ -24,7 +24,7 @@ export class Contortionist<R> {
    * 
    * @returns an instance of a Contortionist class.
    */
-  constructor({ grammar, model }: ContortionistOptions) {
+  constructor({ grammar, model }: ConstructorOptions) {
     this.grammar = grammar;
     this.llm = getLLM(model);
   }
@@ -34,7 +34,7 @@ export class Contortionist<R> {
     stream,
     streamCallback,
     signal,
-  }: ExternalExecuteOptions<R> = {}) => {
+  }: ExternalExecuteOptions<M> = {}) => {
     if (stream === false && streamCallback) {
       console.warn('streamCallback is ignored when stream is false');
     }
