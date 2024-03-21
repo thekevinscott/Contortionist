@@ -1,25 +1,25 @@
-{
-  "name": "root",
-  "private": true,
-  "type": "module",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/thekevinscott/contortionist.git"
-  },
-  "scripts": {
-    "dev": "wireit"
-  },
-  "wireit": {
-    "dev": {
-      "command": "pnpm --filter ./dev dev"
+  {
+    "name": "@contortionist/root",
+    "private": true,
+    "type": "module",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/thekevinscott/codesynth.git"
+    },
+    "scripts": {},
+    "wireit": {},
+    "keywords": [],
+    "author": "Kevin Scott",
+    "license": "MIT",
+    "dependencies": {
+      "contortionist": "latest"
+    },
+    "devDependencies": {
+      "@types/jest": "^29.5.12",
+      "rimraf": "^5.0.5",
+      "tslib": "^2.6.2",
+      "typescript": "^5.3.3",
+      "vitest": "^1.3.1",
+      "wireit": "^0.14.4"
     }
-  },
-  "author": "Kevin Scott",
-  "license": "MIT",
-  "dependencies": {},
-  "devDependencies": {
-    "@types/node": "^20.11.22",
-    "typescript": "^5.3.3",
-    "wireit": "^0.14.4"
   }
-}

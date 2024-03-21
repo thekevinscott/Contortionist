@@ -1,5 +1,5 @@
 import { pipeline } from '@xenova/transformers';
-import Contortionist from '../../../packages/contortionist/src/index.js';
+import Contortionist from '../../../src/index.js';
 import { CHESS_GRAMMAR } from '../gbnf/grammars.js';
 
 for (const [protocol, model] of [

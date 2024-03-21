@@ -1,10 +1,6 @@
-src
-.github
-dev
-node_modules
 .wireit
-env
-rollup.config.js
+node_modules
+src
 tsconfig.json
 tsconfig.test.json
-vitest.config.ts
+vite.config.ts
