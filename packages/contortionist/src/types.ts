@@ -1,4 +1,5 @@
 import { Tensor, TextGenerationPipeline } from "@xenova/transformers";
+import { LlamaCPPResponse } from "./llms/endpoint-llms/llama-cpp-llm.js";
 
 export interface GenerationOutput {
   input_ids: Tensor;
@@ -11,38 +12,38 @@ export type ModelProtocol = 'llama.cpp' | 'llamafile';
 
 export interface ModelProtocolDefinition {
   endpoint: string;
-  protocol: ModelProtocol;
+  protocol: string;
 }
 
 export type ModelDefinition = ModelProtocolDefinition | TextGenerationPipeline | Promise<TextGenerationPipeline>;
 export type Grammar = string;
 
-export const modelIsProtocolDefinition = (model: ModelDefinition): model is ModelProtocolDefinition => {
+export function modelIsProtocolDefinition(model: ModelDefinition): model is ModelProtocolDefinition {
   return typeof model === 'object' && 'endpoint' in model && model.endpoint !== undefined;
 }
 
-export type StreamCallback<R> = (opts: { chunk: R, partial: string }) => void;
+export type StreamCallback<M extends ModelProtocol> = (opts: { chunk: M extends 'llama.cpp' ? LlamaCPPResponse : undefined, partial: string }) => void;
 
-export interface InternalExecuteOptions<R> {
+export interface InternalExecuteOptions<M extends ModelProtocol> {
   prompt: string;
   n: number;
   grammar: string;
   stream: boolean;
-  streamCallback?: StreamCallback<R>;
+  streamCallback?: StreamCallback<M>;
   internalSignal: AbortSignal;
   externalSignal?: AbortSignal;
 }
-export type Execute<R> = (opts: InternalExecuteOptions<R>) => Promise<string>;
+export type Execute<M extends ModelProtocol> = (opts: InternalExecuteOptions<M>) => Promise<string>;
 
-export interface ExternalExecuteOptions<R> {
+export interface ExternalExecuteOptions<M extends ModelProtocol> {
   n?: number;
   stream?: boolean;
-  streamCallback?: StreamCallback<R>;
+  streamCallback?: StreamCallback<M>;
   signal?: AbortSignal;
 }
 export const DEFAULT_N = 20;
 
-export interface ContortionistOptions {
+export interface ConstructorOptions {
   grammar: Grammar;
   model: ModelDefinition;
 }

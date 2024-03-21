@@ -1,4 +1,4 @@
-import Contortionist, { ModelDefinition } from '../../../packages/contortionist/src/index.js';
+import Contortionist from '../../../packages/contortionist/src/index.js';
 import '@vanillawc/wc-monaco-editor';
 const grammars = import.meta.glob('./grammars/*.gbnf', {
   eager: true,
@@ -6,7 +6,7 @@ const grammars = import.meta.glob('./grammars/*.gbnf', {
   import: 'default',
 });
 
-const model: ModelDefinition = {
+const model = {
   protocol: 'llama.cpp',
   endpoint: import.meta.env.VITE_LLAMACPP_ENDPOINT_URL,
 };

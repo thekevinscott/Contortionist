@@ -9,7 +9,7 @@ interface LlamaCPPCallOpts {
   signal: AbortSignal;
 }
 
-interface LlamaCPPResponse {
+export interface LlamaCPPResponse {
   content: string
   generation_settings: {
     "dynatemp_exponent": number;
