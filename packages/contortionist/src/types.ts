@@ -44,6 +44,6 @@ export interface ExternalExecuteOptions<M extends ModelProtocol> {
 export const DEFAULT_N = 20;
 
 export interface ConstructorOptions {
-  grammar: Grammar;
-  model: ModelDefinition;
+  grammar?: Grammar;
+  model?: ModelDefinition;
 }

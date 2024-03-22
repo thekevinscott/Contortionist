@@ -1,7 +1,7 @@
 {
   "name": "contortionist",
   "type": "module",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "./dist/contortionist.js",
   "repository": {
     "type": "git",
