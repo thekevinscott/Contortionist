@@ -1,14 +1,14 @@
 {
   "name": "contortionist",
   "type": "module",
-  "version": "0.0.4",
-  "main": "./dist/index.js",
+  "version": "0.0.5",
+  "main": "./dist/contortionist.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/thekevinscott/contortionist.git"
   },
   "exports": {
-    ".": "./dist/index.js"
+    ".": "./dist/contortionist.js"
   },
   "scripts": {
     "test": "wireit",
