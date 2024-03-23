@@ -4,7 +4,7 @@ import {
 } from "../types.js";
 import {
   // LlamafileLLM, 
-  LlamaCPPLLM
+  LlamaCPPLLM,
 } from "./endpoint-llms/index.js";
 // import { TransformersJSLLM } from "./js-llms/transformersjs-llm/transformersjs-llm.js";
 
@@ -19,5 +19,5 @@ export const getLLM = (model: ModelDefinition) => {
   //   return new LlamafileLLM(model.endpoint);
   // }
 
-  throw new Error(`Unknown model definition: ${JSON.stringify(model)}`)
+  throw new Error(`Unknown model definition: ${JSON.stringify(model)}`);
 };

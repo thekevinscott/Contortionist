@@ -1,5 +1,5 @@
 import { getLLM, AbstractLLM, } from "./llms/index.js";
-import { ConstructorOptions, DEFAULT_N, ExternalExecuteOptions, Grammar, ModelDefinition, ModelProtocol } from "./types.js";
+import { ConstructorOptions, DEFAULT_N, ExternalExecuteOptions, Grammar, ModelDefinition, ModelProtocol, } from "./types.js";
 
 export class Contortionist<M extends ModelProtocol> {
   private _grammar?: Grammar;
@@ -24,7 +24,7 @@ export class Contortionist<M extends ModelProtocol> {
    * 
    * @returns an instance of a Contortionist class.
    */
-  constructor({ grammar, model }: ConstructorOptions) {
+  constructor({ grammar, model, }: ConstructorOptions) {
     this.grammar = grammar;
     this.llm = model;
   }
@@ -46,7 +46,7 @@ export class Contortionist<M extends ModelProtocol> {
     signal,
   }: ExternalExecuteOptions<M> = {}) => {
     if (!this._llm) {
-      throw new Error('You must set an LLM before running.')
+      throw new Error('You must set an LLM before running.');
     }
     if (stream === false && streamCallback) {
       console.warn('streamCallback is ignored when stream is false');

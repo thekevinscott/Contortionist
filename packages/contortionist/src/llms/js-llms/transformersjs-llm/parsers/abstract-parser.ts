@@ -1,5 +1,5 @@
-import { Tensor } from "@xenova/transformers";
-import { Tokenizer } from "../llms/js-llms/transformersjs-llm/tokenizer.js";
+import { Tensor, } from "@xenova/transformers";
+import { Tokenizer, } from "../llms/js-llms/transformersjs-llm/tokenizer.js";
 
 export abstract class AbstractParser {
   tokenizer: Tokenizer;
@@ -9,7 +9,7 @@ export abstract class AbstractParser {
 
   abstract getAllowedTokens(inputTokens: number[], logits: Tensor): (string | number)[];
 
-  nextLex = async (obj: { prompt: string; partialCompletion: string }) => { }
+  nextLex = async (obj: { prompt: string; partialCompletion: string }) => { };
 
   get shouldContinue() { return true; }
 }

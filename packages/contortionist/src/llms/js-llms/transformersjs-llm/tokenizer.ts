@@ -86,8 +86,8 @@
 //   }
 // }
 
-import { pipeline, env, TextGenerationConfig, PreTrainedTokenizer, TextGenerationPipeline, Tensor } from '@xenova/transformers';
-import { GenerationOutput, OutputTokenIds } from '../../../types.js';
+import { pipeline, env, TextGenerationConfig, PreTrainedTokenizer, TextGenerationPipeline, Tensor, } from '@xenova/transformers';
+import { GenerationOutput, OutputTokenIds, } from '../../../types.js';
 export class Tokenizer {
   tokenizerArgs: any;
   // stopToken: Promise<string>;
@@ -117,12 +117,12 @@ export class Tokenizer {
     };
 
     return this.generator.tokenizer(prompt, tokenizerArgs);
-  }
+  };
 
   // decode (outputTokenIds: number): string
   decode = (outputTokenIds: number | OutputTokenIds) => {
     if (typeof outputTokenIds === 'number') {
-      return this.generator.tokenizer.decode([outputTokenIds], {
+      return this.generator.tokenizer.decode([outputTokenIds,], {
         skip_special_tokens: true,
       });
     }

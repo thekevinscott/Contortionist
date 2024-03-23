@@ -1,4 +1,4 @@
-import { AbstractParser } from "./abstract-parser.js";
+import { AbstractParser, } from "./abstract-parser.js";
 
 export class DumbParser extends AbstractParser {
   times = 0;
@@ -7,12 +7,12 @@ export class DumbParser extends AbstractParser {
     // console.log(inputTokens.map(this.tokenizer.decode));
     this.times += 1;
     if (this.times === 2) {
-      return ['n'];
+      return ['n',];
     }
     if (this.times === 3) {
-      return ['(', ')'];
+      return ['(', ')',];
     }
-    return [':', '(', ')', '\n'];
+    return [':', '(', ')', '\n',];
   }
 
 }

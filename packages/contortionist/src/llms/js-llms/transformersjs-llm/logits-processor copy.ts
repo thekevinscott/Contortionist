@@ -1,6 +1,6 @@
-import { Tensor } from "@xenova/transformers";
-import { Tokenizer } from "./tokenizer.js";
-import { AbstractParser } from "../../../parsers/index.js";
+import { Tensor, } from "@xenova/transformers";
+import { Tokenizer, } from "./tokenizer.js";
+import { AbstractParser, } from "../../../parsers/index.js";
 
 export class LogitsProcessor {
   tokenizer: Tokenizer;
@@ -11,13 +11,13 @@ export class LogitsProcessor {
   }
 
   getAllowedToken = (word: string) => {
-    const { input_ids: { dims: [b, n], data } } = this.tokenizer.encode(word);
+    const { input_ids: { dims: [b, n,], data, }, } = this.tokenizer.encode(word);
     if (n > 1) {
       throw new Error(`token.length is ${n} for word ${word}`);
     }
 
     return data[0];
-  }
+  };
   // process = (logits: { token: string; logprob: number; }[]) => {
   //   const allowedTokens = this.parser.getAllowedTokens().map(tokenId => this.tokenizer.decode(tokenId));
   //   const sortedLogits = logits.sort((a, b) => b.logprob - a.logprob);
@@ -44,7 +44,7 @@ export class LogitsProcessor {
   //   // return logits;
   // }
   processors = [(input_tokens: number[], logits: Tensor) => {
-    console.log('processors', input_tokens, logits)
+    console.log('processors', input_tokens, logits);
     const originalValues: Record<number, number> = this.parser.getAllowedTokens(input_tokens, logits).reduce<Record<number, number>>((obj, word) => {
       const tokenId = typeof word !== 'number' ? this.getAllowedToken(word) : word;
       return {
@@ -52,8 +52,8 @@ export class LogitsProcessor {
         [tokenId]: logits.data[tokenId],
       };
     }, {});
-    (logits.data as any).fill(-Infinity);
-    Object.entries(originalValues).forEach(([token_id, value]) => {
+    (logits.data).fill(-Infinity);
+    Object.entries(originalValues).forEach(([token_id, value,]) => {
       logits.data[token_id] = value;
     });
     // console.log('originalValues', Object.keys(originalValues).length);
@@ -62,7 +62,7 @@ export class LogitsProcessor {
     //   score,
     // })).slice(0, 15));
     return logits;
-  }];
+  },];
   // processors: any = [(_input_tokens: number[], logits: any) => {
   //   // console.log(generator.tokenizer.decode(input_ids))
   //   // const allowed_token_ids = token_filter.filter_tokens(generatedText, pattern)

@@ -1,8 +1,8 @@
-import { Tensor, TextGenerationConfig, TextGenerationPipeline } from "@xenova/transformers";
-import { AbstractLLM } from "../../abstract-llm.js";
-import { Tokenizer } from "./tokenizer.js";
-import { InternalExecuteOptions, OutputTokenIds } from "../../../types.js";
-import { LogitsProcessor } from "./logits-processor.js";
+import { Tensor, TextGenerationConfig, TextGenerationPipeline, } from "@xenova/transformers";
+import { AbstractLLM, } from "../../abstract-llm.js";
+import { Tokenizer, } from "./tokenizer.js";
+import { InternalExecuteOptions, OutputTokenIds, } from "../../../types.js";
+import { LogitsProcessor, } from "./logits-processor.js";
 
 interface Objects {
   pipeline: TextGenerationPipeline;
@@ -29,7 +29,7 @@ export class TransformersJSLLM implements AbstractLLM {
       pipeline: model,
       tokenizer,
     };
-  }
+  };
 
   execute = async ({ n, streamCallback, prompt, ...opts }: InternalExecuteOptions<TransformersJSResponse>) => {
     // execute: Execute = async (prompt: string, { maxTokens = 1 }: { maxTokens?: number } = {}) => {
@@ -45,7 +45,7 @@ export class TransformersJSLLM implements AbstractLLM {
       max_new_tokens: n,
     };
     const logitsProcessor = new LogitsProcessor(tokenizer, streamCallback);
-    const { input_ids, attention_mask } = await tokenizer.encode(prompt);
+    const { input_ids, attention_mask, } = await tokenizer.encode(prompt);
     const outputTokenIds = await pipeline.model.generate(input_ids, generate_kwargs, logitsProcessor, {
       inputs_attention_mask: attention_mask,
     });
@@ -101,5 +101,5 @@ export class TransformersJSLLM implements AbstractLLM {
     // }
     // console.log('returning', promptAndPartialCompletion)
     // return promptAndPartialCompletion;
-  }
+  };
 }

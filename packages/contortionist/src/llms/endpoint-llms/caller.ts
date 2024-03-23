@@ -1,4 +1,4 @@
-import { StreamCallback } from "../../types.js";
+import { StreamCallback, } from "../../types.js";
 
 interface CallerOpts {
   prompt: string;
@@ -19,7 +19,7 @@ export class Caller<R> {
   fetch = async (endpoint: string, { signal, ...opts }: CallerOpts) => {
     const response = await fetch(endpoint, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', },
       body: JSON.stringify(opts),
       signal,
     });
@@ -29,7 +29,7 @@ export class Caller<R> {
     }
 
     return response.json();
-  }
+  };
 
   parseChunk = (chunk: string) => chunk;
   parseResult = (_result: R) => { };
@@ -49,8 +49,8 @@ export class Caller<R> {
 
     let chunk = '';
     while (true) {
-      const { done, value } = await reader.read();
-      chunk += decoder.decode(value, { stream: true });
+      const { done, value, } = await reader.read();
+      chunk += decoder.decode(value, { stream: true, });
       try {
         if (chunk === '' || done) {
           // console.log('done!')
@@ -58,7 +58,7 @@ export class Caller<R> {
         }
         const parsedChunk: R = JSON.parse(this.parseChunk(chunk));
         if (this.callback) {
-          this.callback({ chunk: parsedChunk, partial: this.partial });
+          this.callback({ chunk: parsedChunk, partial: this.partial, });
         }
         chunk = '';
         this.parseResult(parsedChunk);

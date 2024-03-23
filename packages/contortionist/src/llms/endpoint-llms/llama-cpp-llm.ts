@@ -1,5 +1,5 @@
-import { InternalExecuteOptions } from "../../types.js";
-import { Caller } from "./caller.js";
+import { InternalExecuteOptions, } from "../../types.js";
+import { Caller, } from "./caller.js";
 
 interface LlamaCPPCallOpts {
   prompt: string;
@@ -87,7 +87,7 @@ class LlamaCPPCaller extends Caller<LlamaCPPResponse> {
     this.result = {
       ...result,
       content: (this.result?.content || '') + result.content,
-    }
+    };
     this.partial += result.content;
   };
 }
@@ -111,18 +111,18 @@ export class LlamaCPPLLM {
     grammar,
     stream,
     signal: externalSignal || internalSignal,
-  })
+  });
 
   execute = async ({ streamCallback, ...opts }: InternalExecuteOptions<LlamaCPPResponse>) => {
     const builtOpts = this.buildOpts(opts);
     const caller = new LlamaCPPCaller(this.endpoint, streamCallback);
     const response = await caller.fetch(this.endpoint, builtOpts) || caller.result;
     if (!response) {
-      throw new Error('No response, caller was never called')
+      throw new Error('No response, caller was never called');
     }
     if (isError(response)) {
       throw new Error(JSON.stringify(response.error));
     }
     return response.content;
-  }
+  };
 }

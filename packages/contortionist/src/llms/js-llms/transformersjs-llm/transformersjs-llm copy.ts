@@ -1,8 +1,8 @@
-import { TextGenerationConfig, TextGenerationPipeline } from "@xenova/transformers";
-import { AbstractLLM, Execute } from "../../abstract-llm.js";
-import { Tokenizer } from "./tokenizer.js";
-import { LogitsProcessor } from "./logits-processor.js";
-import { getParser } from "./parsers/get-parser.js";
+import { TextGenerationConfig, TextGenerationPipeline, } from "@xenova/transformers";
+import { AbstractLLM, Execute, } from "../../abstract-llm.js";
+import { Tokenizer, } from "./tokenizer.js";
+import { LogitsProcessor, } from "./logits-processor.js";
+import { getParser, } from "./parsers/get-parser.js";
 
 interface Objects {
   pipeline: TextGenerationPipeline;
@@ -29,9 +29,9 @@ export class TransformersJSLLM implements AbstractLLM {
       pipeline: model,
       tokenizer,
     };
-  }
+  };
 
-  execute: Execute = async (prompt: string, { maxTokens = 1 }: { maxTokens?: number } = {}) => {
+  execute: Execute = async (prompt: string, { maxTokens = 1, }: { maxTokens?: number } = {}) => {
     console.log(`execute: ${prompt}`);
     const {
       tokenizer,
@@ -51,14 +51,14 @@ export class TransformersJSLLM implements AbstractLLM {
       console.log('next lex', performance.now() - start);
       start = performance.now();
       if (!parser.shouldContinue) {
-        console.log(`do not continue, processed ${i} tokens`)
+        console.log(`do not continue, processed ${i} tokens`);
         break;
       }
       console.log('should continue', performance.now() - start);
 
       // console.log(`promptAndPartialCompletion: ${promptAndPartialCompletion}`)
       start = performance.now();
-      const { input_ids, attention_mask } = await tokenizer.encode(promptAndPartialCompletion);
+      const { input_ids, attention_mask, } = await tokenizer.encode(promptAndPartialCompletion);
       console.log('tokenizer encode', performance.now() - start);
       if (input_ids.size === 0) {
         throw new Error(`Got empty input_ids for "${promptAndPartialCompletion}"`);
@@ -72,7 +72,7 @@ export class TransformersJSLLM implements AbstractLLM {
         max_new_tokens: 3,
       };
       const outputTokenIds = await pipeline.model.generate(input_ids, generate_kwargs, logitsProcessor, {
-        inputs_attention_mask: attention_mask
+        inputs_attention_mask: attention_mask,
       });
       console.log('generate text', performance.now() - start);
       start = performance.now();
@@ -80,13 +80,13 @@ export class TransformersJSLLM implements AbstractLLM {
       console.log('tokenizer decode', performance.now() - start);
       // console.log(`decoded: ${decoded}`)
       partialCompletion = decoded[0].slice(prompt.length);
-      console.log(`partialCompletion: ${partialCompletion}`)
+      console.log(`partialCompletion: ${partialCompletion}`);
       promptAndPartialCompletion = `${prompt}${partialCompletion}`;
       // promptAndPartialCompletion += partialCompletion;
       // `${prompt}${partialCompletion}`;
       // console.log(`promptAndPartialCompletion: ${promptAndPartialCompletion}`)
     }
-    console.log('returning', promptAndPartialCompletion)
+    console.log('returning', promptAndPartialCompletion);
     return promptAndPartialCompletion;
-  }
+  };
 }

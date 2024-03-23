@@ -1,5 +1,5 @@
-import { InternalExecuteOptions } from "../../types.js";
-import { Caller } from "./caller.js";
+import { InternalExecuteOptions, } from "../../types.js";
+import { Caller, } from "./caller.js";
 
 export interface Message {
   content: string; role: 'user' | 'assistant' | 'system'
@@ -56,11 +56,11 @@ class LlamafileCaller extends Caller<LlamafileResponse> {
   result?: LlamafileResponse;
   override parseChunk = (chunk: string) => chunk.split('data:').pop()?.trim() || '';
   override parseResult = (result: LlamafileResponse) => {
-    console.log(result)
+    console.log(result);
     this.result = {
       ...result,
       content: (this.result?.content || '') + result.content,
-    }
+    };
     this.partial += result.content;
   };
 }
@@ -93,7 +93,7 @@ export class LlamafileLLM {
       n,
       stream,
       grammar,
-    }
+    };
   };
 
   execute = async ({ streamCallback, ...opts }: InternalExecuteOptions<LlamafileResponse>) => {
@@ -102,11 +102,11 @@ export class LlamafileLLM {
     const response = await caller.fetch(this.endpoint, builtOpts) || caller.result;
     console.log('response', response);
     if (!response) {
-      throw new Error('No response, caller was never called')
+      throw new Error('No response, caller was never called');
     }
     if (isError(response)) {
       throw new Error(JSON.stringify(response.error));
     }
     return response.content;
-  }
+  };
 }
