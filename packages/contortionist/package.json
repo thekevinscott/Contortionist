@@ -11,7 +11,8 @@
     ".": "./dist/contortionist.js"
   },
   "scripts": {
-    "test": "wireit",
+    "lint": "wireit",
+    "test": "vitest",
     "larkgenpython": "lark-js ./src/parsers/lark-parser/grammars/python/python.lark -o ./src/parsers/lark-parser/grammars/python/python-parser.js",
     "lark-gen-json": "lark-js ./src/parsers/lark-parser/grammars/json/json.lark -o ./src/parsers/lark-parser/grammars/json/json-parser.js",
     "genpython": "antlr4ng -Dlanguage=TypeScript -o ./src/parsers/antlr4-parser/grammars/Python3/generated -Xexact-output-dir -visitor ./src/parsers/antlr4-parser/grammars/Python3/Python3Lexer.g4 ./src/parsers/antlr4-parser/grammars/Python3/Python3Parser.g4",
@@ -23,8 +24,8 @@
     "build": "wireit"
   },
   "wireit": {
-    "test": {
-      "command": "vitest"
+    "lint": {
+      "command": "eslint -c .eslintrc.cjs src --ext .ts"
     },
     "build": {
       "command": "rimraf ./dist && vite build",
@@ -48,6 +49,9 @@
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.6",
+    "@typescript-eslint/eslint-plugin": "^7.3.1",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
     "@types/jest": "^29.5.12",
     "rimraf": "^5.0.5",
     "rollup": "^4.12.1",
