@@ -45,7 +45,8 @@
   "author": "Kevin Scott",
   "license": "MIT",
   "dependencies": {
-    "@xenova/transformers": "^2.16.0"
+    "@xenova/transformers": "^2.16.0",
+    "gbnf": "^0.0.1"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.6",
