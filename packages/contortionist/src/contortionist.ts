@@ -1,10 +1,9 @@
-import { LlamaCPPLLM, } from "./llms/endpoint-llms/llama-cpp/llama-cpp-llm.js";
 import { getLLM, } from "./llms/index.js";
-import { ConstructorOptions, DEFAULT_N, ExternalExecuteOptions, Grammar, ModelDefinition, ModelProtocol, } from "./types.js";
+import { ChosenLLM, ConstructorOptions, DEFAULT_N, ExternalExecuteOptions, Grammar, ModelDefinition, ModelProtocol, Prompt, } from "./types.js";
 
 export class Contortionist<M extends ModelProtocol> {
   private _grammar?: Grammar;
-  private _llm?: LlamaCPPLLM;
+  private _llm?: ChosenLLM<M>;
 
   /**
    * @hidden
@@ -25,7 +24,7 @@ export class Contortionist<M extends ModelProtocol> {
    * 
    * @returns an instance of a Contortionist class.
    */
-  constructor({ grammar, model, }: ConstructorOptions) {
+  constructor({ grammar, model, }: ConstructorOptions<M>) {
     this.grammar = grammar;
     this.llm = model;
   }
@@ -36,35 +35,32 @@ export class Contortionist<M extends ModelProtocol> {
   public set grammar(grammar: Grammar | undefined) {
     this._grammar = grammar;
   }
-  public set llm(model: ModelDefinition | undefined) {
-    this._llm = model ? getLLM(model) : undefined;
+  public set llm(model: ModelDefinition<M> | undefined) {
+    this._llm = model ? getLLM<M>(model) : undefined;
   }
-  public get llm(): LlamaCPPLLM {
+  public get llm(): ChosenLLM<M> {
     if (!this._llm) {
       throw new Error('You must set an LLM before running.');
     }
     return this._llm;
   }
 
-  execute = async (prompt: string, {
+  async execute<S extends boolean>(prompt: Prompt<M>, {
     n = DEFAULT_N,
     stream,
     callback,
     signal,
-  }: ExternalExecuteOptions<M> = {}) => {
+  }: ExternalExecuteOptions<M, S> = {}) {
     if (!this._llm) {
       throw new Error('You must set an LLM before running.');
     }
     if (stream === false && callback) {
       console.warn('streamCallback is ignored when stream is false');
     }
-    if (callback && stream === undefined) {
-      stream = true;
-    }
-    const llm = this.llm;
+    const llm: ChosenLLM<M> = this.llm;
     const r = await llm.execute({
       n,
-      stream: !!stream,
+      stream: (callback && stream === undefined) ? true : !!stream,
       callback,
       prompt,
       grammar: this._grammar,
@@ -86,3 +82,19 @@ export class Contortionist<M extends ModelProtocol> {
     this._abortController = new AbortController();
   };
 }
+
+const c1 = new Contortionist({
+  model: {
+    endpoint: 'foo',
+    protocol: 'llama.cpp',
+  },
+});
+c1.llm;
+
+const c2 = new Contortionist({
+  model: {
+    endpoint: 'foo',
+    protocol: 'llamafile',
+  },
+});
+c2.llm;

@@ -1,15 +1,7 @@
 import { LlamaCPPLLM, } from './llama-cpp-llm.js';
 import { vi } from 'vitest';
 import { fetchAPI, } from "../fetch-api/fetch-api.js";
-// import { buildResponse } from './build-response.js';
-// import { parseChunk } from './parse-chunk.js';
-// import { parse, } from "./parse.js";
-// import { isError, } from "./is-error.js";
 import type * as _fetchAPI from '../fetch-api/fetch-api.js';
-// import type * as _parse from './parse.js';
-// import type * as _parseChunk from './parse-chunk.js';
-// import type * as _buildResponse from './build-response.js';
-// import type * as _isError from './is-error.js';
 import { makeMockLlamaCPPError, makeMockLlamaCPPResponse } from './__fixtures__/make-llama-cpp-response.js';
 
 vi.mock("../fetch-api/fetch-api.js", async () => {
@@ -19,34 +11,6 @@ vi.mock("../fetch-api/fetch-api.js", async () => {
     fetchAPI: vi.fn(),
   };
 });
-// vi.mock("./parse.js", async () => {
-//   const actual = await vi.importActual("./parse.js") as typeof _parse;
-//   return {
-//     ...actual,
-//     parse: vi.fn(),
-//   };
-// });
-// vi.mock("./parse-chunk.js", async () => {
-//   const actual = await vi.importActual("./parse-chunk.js") as typeof _parseChunk;
-//   return {
-//     ...actual,
-//     parseChunk: vi.fn(),
-//   };
-// });
-// vi.mock("./build-response.js", async () => {
-//   const actual = await vi.importActual("./build-response.js") as typeof _buildResponse;
-//   return {
-//     ...actual,
-//     buildResponse: vi.fn(),
-//   };
-// });
-// vi.mock("./is-error.js", async () => {
-//   const actual = await vi.importActual("./is-error.js") as typeof _isError;
-//   return {
-//     ...actual,
-//     isError: vi.fn(),
-//   };
-// });
 
 describe('LlamaCPPLLM', () => {
   afterEach(() => {
@@ -93,8 +57,8 @@ describe('LlamaCPPLLM', () => {
 
   test('it throws error if error is found', async () => {
     const llm = new LlamaCPPLLM('foo');
-    const err = { error: { code: 1, message: 'foo', type: 'bar' } };
+    const err = { code: 1, message: 'foo', type: 'bar' };
     vi.mocked(fetchAPI).mockResolvedValue([JSON.stringify(makeMockLlamaCPPError(err))]);
-    expect(() => llm.execute({ prompt: 'foo', n: 1, grammar: 'foo', stream: false, signal: new AbortController().signal })).rejects.toThrow(JSON.stringify(err.error));
+    expect(() => llm.execute({ prompt: 'foo', n: 1, grammar: 'foo', stream: false, signal: new AbortController().signal })).rejects.toThrow(JSON.stringify(err));
   });
 });
