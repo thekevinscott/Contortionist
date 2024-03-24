@@ -74,6 +74,9 @@ importers:
       '@xenova/transformers':
         specifier: ^2.16.0
         version: 2.16.0
+      gbnf:
+        specifier: ^0.0.1
+        version: 0.0.1
     devDependencies:
       '@rollup/plugin-typescript':
         specifier: ^11.1.6
@@ -2352,6 +2355,10 @@ packages:
   /function-bind@1.1.2:
     resolution: {integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==}
     dev: true
+
+  /gbnf@0.0.1:
+    resolution: {integrity: sha512-+TipnDUq1maLV3LU52X3wP490RxqKv7mJQOAPa6klgSlL4MME3Pgp+cPlWDnN/+KnGdjsJA0eNRFUvTkZSv2wg==}
+    dev: false
 
   /get-func-name@2.0.2:
     resolution: {integrity: sha512-8vXOvuE167CtIc3OyItco7N/dpRtBbYOsPsXCz7X/PMnlGjYjSGuZJgM1Y7mmew7BKf9BqvLX2tnOVy1BBUsxQ==}
