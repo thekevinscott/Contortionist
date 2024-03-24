@@ -67,9 +67,9 @@
 
 
 
-import { pipeline, env, TextGenerationConfig, PreTrainedTokenizer, TextGenerationPipeline, Tensor } from '@xenova/transformers';
-import { GenerationOutput, OutputTokenIds } from '../types.js';
-import { Tokenizer } from './js-llms/transformersjs-llm/tokenizer.js';
+import { pipeline, env, TextGenerationConfig, PreTrainedTokenizer, TextGenerationPipeline, Tensor, } from '@xenova/transformers';
+import { GenerationOutput, OutputTokenIds, } from '../types.js';
+import { Tokenizer, } from './js-llms/transformersjs-llm/tokenizer.js';
 
 env.allowRemoteModels = true;
 env.allowLocalModels = false;
@@ -85,7 +85,7 @@ export class LLM {
     progress_callback: progressCallback,
   });
 
-  async generateText({ input_ids, attention_mask }: GenerationOutput, config: TextGenerationConfig, logitsProcessor: any = null): Promise<number[][]> {
+  async generateText({ input_ids, attention_mask, }: GenerationOutput, config: TextGenerationConfig, logitsProcessor: any = null): Promise<number[][]> {
     if (input_ids.size === 0) {
       throw new Error(`input_ids must be non-empty`);
     }
@@ -96,7 +96,7 @@ export class LLM {
     };
     const pipeline = await this.apipeline;
     return pipeline.model.generate(input_ids, generate_kwargs, logitsProcessor, {
-      inputs_attention_mask: attention_mask
+      inputs_attention_mask: attention_mask,
     });
   }
 }

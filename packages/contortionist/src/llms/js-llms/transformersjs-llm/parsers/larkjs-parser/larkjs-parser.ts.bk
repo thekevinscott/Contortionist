@@ -1,7 +1,7 @@
-import { Tokenizer } from "../../llms/js-llms/transformersjs-llm/tokenizer.js";
-import { AbstractParser } from "../abstract-parser.js";
+import { Tokenizer, } from "../../llms/js-llms/transformersjs-llm/tokenizer.js";
+import { AbstractParser, } from "../abstract-parser.js";
 // import { get_parser as helloWorldParser } from './hello_world_parser.js';
-import { get_parser as JSONParser } from './grammars/json/json-parser.js';
+import { get_parser as JSONParser, } from './grammars/json/json-parser.js';
 
 export class LarkJSParser extends AbstractParser {
   times = 0;
@@ -17,7 +17,7 @@ export class LarkJSParser extends AbstractParser {
     });
     for (const terminal of this.parser.terminals) {
       if (terminal.pattern) {
-        console.log(terminal.pattern)
+        console.log(terminal.pattern);
         const re: any = new RegExp(terminal.pattern.to_regexp());
         // console.log('re', re, terminal.pattern);
         this.terminals.set(terminal.name, re);
@@ -25,11 +25,11 @@ export class LarkJSParser extends AbstractParser {
     }
   }
 
-  nextLex = async ({ partialCompletion }) => {
+  nextLex = async ({ partialCompletion, }) => {
     const interactive = this.parser.parse_interactive(partialCompletion);
     interactive.exhaust_lexer();
     this.validNextLex = interactive.accepts();
-  }
+  };
 
   get shouldContinue() {
     if (this.validNextLex.size === 0 || (this.validNextLex.size === 1 && this.validNextLex.has('$END'))) {
@@ -49,14 +49,14 @@ export class LarkJSParser extends AbstractParser {
     });
     // console.log('patterns', patterns)
     const validTokenIds: number[] = [];
-    for (const [tokenId, word] of this.decodedTokens) {
-      for (const { re, t } of patterns) {
+    for (const [tokenId, word,] of this.decodedTokens) {
+      for (const { re, t, } of patterns) {
         if (re.test(word)) {
-          validTokenIds.push(tokenId)
+          validTokenIds.push(tokenId);
           break;
         }
       }
     }
     return validTokenIds;
-  }
+  };
 }

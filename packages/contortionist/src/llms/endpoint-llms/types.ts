@@ -5,5 +5,5 @@ export interface Opts {
   stream?: boolean;
 }
 
-export type BuildOpts<R extends Record<string, any>> = (opts: Opts) => R;
+export type BuildOpts<R extends object> = (opts: Opts) => R;
 // export type Call = (opts: Opts) => Promise<string>;

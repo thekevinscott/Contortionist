@@ -1,12 +1,12 @@
-import { loadPyodide } from "pyodide";
+import { loadPyodide, } from "pyodide";
 import * as path from 'path';
 import pythonCode from './code.py?raw';
 
 
-import { Tokenizer } from "../../llms/js-llms/transformersjs-llm/tokenizer.js";
-import { AbstractParser } from "../abstract-parser.js";
-import { PyodideInterface } from "pyodide";
-import { Tensor } from "@xenova/transformers";
+import { Tokenizer, } from "../../llms/js-llms/transformersjs-llm/tokenizer.js";
+import { AbstractParser, } from "../abstract-parser.js";
+import { PyodideInterface, } from "pyodide";
+import { Tensor, } from "@xenova/transformers";
 // import { get_parser as helloWorldParser } from './hello_world_parser.js';
 // import { get_parser as JSONParser } from './grammars/json/json-parser.js';
 
@@ -50,16 +50,16 @@ export class LarkPythonParser extends AbstractParser {
 
     await pyodide.runPythonAsync(pythonCode);
     const vocab = JSON.stringify(JSON.stringify(this.vocab));
-    await pyodide.runPythonAsync(`token_filter = ReTokenFilter(json.loads(${vocab}))`)
+    await pyodide.runPythonAsync(`token_filter = ReTokenFilter(json.loads(${vocab}))`);
     return pyodide;
-  }
+  };
 
-  nextLex = async ({ partialCompletion }) => {
+  nextLex = async ({ partialCompletion, }) => {
     const pyodide = await this.pyodide;
     this.validTokenIDs = JSON.parse(await pyodide.runPythonAsync(`dump(get_valid_token_ids(${JSON.stringify(partialCompletion)}, token_filter))`));
     // this.validTokenIDs.unshift(this.stopTokenId);
     // console.log(this.validTokenIDs)
-  }
+  };
 
   get shouldContinue() {
     if (this.validTokenIDs.length === 0) {
@@ -102,5 +102,5 @@ export class LarkPythonParser extends AbstractParser {
     //   }
     // }
     // return validTokenIds;
-  }
+  };
 }

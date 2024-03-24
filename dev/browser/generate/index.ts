@@ -22,14 +22,12 @@ Object.entries(grammars).forEach(([path, grammar]: [string, string]) => {
   const option = document.createElement('option');
   option.value = grammar;
   option.innerText = path.split('/').pop();
-  console.log(option)
   select.appendChild(option);
 });
 
 let abortController: AbortController = new AbortController();
 
 select.onchange = () => {
-  console.log(select.value)
   grammar.setAttribute('value', select.value);
   abortController.abort();
 };
@@ -49,7 +47,7 @@ const synthesize = async (prompt: string) => {
   await contortionist.execute(prompt, {
     n: 400,
     stream: true,
-    streamCallback: ({ partial }) => {
+    callback: ({ partial }) => {
       output.textContent = partial;
     }
   });

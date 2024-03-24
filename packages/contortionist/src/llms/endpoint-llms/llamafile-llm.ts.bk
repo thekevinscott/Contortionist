@@ -1,5 +1,6 @@
-import { InternalExecuteOptions } from "../../types.js";
-import { Caller } from "./caller.js";
+import { InternalExecuteOptions as _InternalExecuteOptions, } from "../../types.js";
+import { Caller, } from "./fetch-api.js";
+type InternalExecuteOptions = _InternalExecuteOptions<'llamafile'>;
 
 export interface Message {
   content: string; role: 'user' | 'assistant' | 'system'
@@ -12,17 +13,16 @@ interface LlamafileCallOpts {
   stream: boolean;
 }
 
-// interface LlamafileStreamingResponse {
-// }
-interface Choice {
-  delta: {
-    content: string;
-  }
-  finish_reason: null | string;
-  index: number;
+// interface Choice {
+//   delta: {
+//     content: string;
+//   }
+//   finish_reason: null | string;
+//   index: number;
 
-}
+// }
 interface LlamafileResponse {
+  content: string;
   //   {
   //     "choices": [
   //         {
@@ -56,11 +56,11 @@ class LlamafileCaller extends Caller<LlamafileResponse> {
   result?: LlamafileResponse;
   override parseChunk = (chunk: string) => chunk.split('data:').pop()?.trim() || '';
   override parseResult = (result: LlamafileResponse) => {
-    console.log(result)
+    console.log(result);
     this.result = {
       ...result,
       content: (this.result?.content || '') + result.content,
-    }
+    };
     this.partial += result.content;
   };
 }
@@ -76,7 +76,7 @@ export class LlamafileLLM {
     n,
     grammar,
     stream,
-  }: InternalExecuteOptions<LlamafileResponse>): LlamafileCallOpts => {
+  }: InternalExecuteOptions): LlamafileCallOpts => {
     const messages: Message[] = [];
     // if (opts.system) {
     //   messages.push({
@@ -93,20 +93,20 @@ export class LlamafileLLM {
       n,
       stream,
       grammar,
-    }
+    };
   };
 
-  execute = async ({ streamCallback, ...opts }: InternalExecuteOptions<LlamafileResponse>) => {
+  execute = async ({ callback: streamCallback, ...opts }: InternalExecuteOptions) => {
     const builtOpts = this.buildOpts(opts);
     const caller = new LlamafileCaller(this.endpoint, streamCallback);
     const response = await caller.fetch(this.endpoint, builtOpts) || caller.result;
     console.log('response', response);
     if (!response) {
-      throw new Error('No response, caller was never called')
+      throw new Error('No response, caller was never called');
     }
     if (isError(response)) {
       throw new Error(JSON.stringify(response.error));
     }
     return response.content;
-  }
+  };
 }

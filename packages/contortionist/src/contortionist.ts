@@ -1,9 +1,10 @@
-import { getLLM, AbstractLLM, } from "./llms/index.js";
-import { ConstructorOptions, DEFAULT_N, ExternalExecuteOptions, Grammar, ModelDefinition, ModelProtocol } from "./types.js";
+import { LlamaCPPLLM, } from "./llms/endpoint-llms/llama-cpp-llm.js";
+import { getLLM, } from "./llms/index.js";
+import { ConstructorOptions, DEFAULT_N, ExternalExecuteOptions, Grammar, ModelDefinition, ModelProtocol, } from "./types.js";
 
 export class Contortionist<M extends ModelProtocol> {
   private _grammar?: Grammar;
-  private _llm?: AbstractLLM;
+  private _llm?: LlamaCPPLLM;
 
   /**
    * @hidden
@@ -24,7 +25,7 @@ export class Contortionist<M extends ModelProtocol> {
    * 
    * @returns an instance of a Contortionist class.
    */
-  constructor({ grammar, model }: ConstructorOptions) {
+  constructor({ grammar, model, }: ConstructorOptions) {
     this.grammar = grammar;
     this.llm = model;
   }
@@ -38,31 +39,39 @@ export class Contortionist<M extends ModelProtocol> {
   public set llm(model: ModelDefinition | undefined) {
     this._llm = model ? getLLM(model) : undefined;
   }
+  public get llm(): LlamaCPPLLM {
+    if (!this._llm) {
+      throw new Error('You must set an LLM before running.');
+    }
+    return this._llm;
+  }
 
-  execute = (prompt: string, {
+  execute = async (prompt: string, {
     n = DEFAULT_N,
     stream,
-    streamCallback,
+    callback,
     signal,
   }: ExternalExecuteOptions<M> = {}) => {
     if (!this._llm) {
-      throw new Error('You must set an LLM before running.')
+      throw new Error('You must set an LLM before running.');
     }
-    if (stream === false && streamCallback) {
+    if (stream === false && callback) {
       console.warn('streamCallback is ignored when stream is false');
     }
-    if (streamCallback && stream === undefined) {
+    if (callback && stream === undefined) {
       stream = true;
     }
-    return this._llm.execute({
+    const llm = this.llm;
+    const r = await llm.execute({
       n,
       stream: !!stream,
-      streamCallback,
+      callback,
       prompt,
       grammar: this._grammar,
       internalSignal: this._abortController.signal,
       externalSignal: signal,
     });
+    return r;
   };
 
   /**
