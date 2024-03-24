@@ -1,6 +1,6 @@
 import { Tensor, TextGenerationConfig, TextGenerationPipeline, } from "@xenova/transformers";
 import { AbstractLLM, } from "../../abstract-llm.js";
-import { Tokenizer, } from "./tokenizer.js";
+import { Tokenizer, } from "./tokenizer.ts.bk";
 import { InternalExecuteOptions, OutputTokenIds, } from "../../../types.js";
 import { LogitsProcessor, } from "./logits-processor.js";
 

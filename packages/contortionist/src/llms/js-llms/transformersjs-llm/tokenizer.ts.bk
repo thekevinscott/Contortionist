@@ -86,10 +86,14 @@
 //   }
 // }
 
-import { pipeline, env, TextGenerationConfig, PreTrainedTokenizer, TextGenerationPipeline, Tensor, } from '@xenova/transformers';
+import { TextGenerationPipeline, } from '@xenova/transformers';
 import { GenerationOutput, OutputTokenIds, } from '../../../types.js';
 export class Tokenizer {
-  tokenizerArgs: any;
+  tokenizerArgs: {
+    add_special_tokens: boolean;
+    padding: boolean;
+    truncation: boolean;
+  };
   // stopToken: Promise<string>;
   generator: TextGenerationPipeline;
   constructor(generator: TextGenerationPipeline, shouldAddSpecialTokens: boolean = false) {

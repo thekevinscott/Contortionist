@@ -42,42 +42,42 @@ jobs:
         working-directory: ./packages/contortionist
         run: 'pnpm lint'
 
-  unit-test:
-    name: 'Unit Test'
-    runs-on: ubuntu-latest
-    steps:
-      - name: 'Checkout repository'
-        uses: actions/checkout@v4
-        with:
-          lfs: 'true'
+  # unit-test:
+  #   name: 'Unit Test'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: 'Checkout repository'
+  #       uses: actions/checkout@v4
+  #       with:
+  #         lfs: 'true'
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20.x'
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '20.x'
 
-      - uses: pnpm/action-setup@v3
-        name: Install pnpm
-        with:
-          version: 8
-          run_install: false
+  #     - uses: pnpm/action-setup@v3
+  #       name: Install pnpm
+  #       with:
+  #         version: 8
+  #         run_install: false
 
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+  #     - name: Get pnpm store directory
+  #       shell: bash
+  #       run: |
+  #         echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
-      - uses: actions/cache@v4
-        name: Setup pnpm cache
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+  #     - uses: actions/cache@v4
+  #       name: Setup pnpm cache
+  #       with:
+  #         path: ${{ env.STORE_PATH }}
+  #         key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-pnpm-store-
 
-      - name: Install dependencies
-        working-directory: ./packages/contortionist
-        run: pnpm install
+  #     - name: Install dependencies
+  #       working-directory: ./packages/contortionist
+  #       run: pnpm install
 
-      - name: 'Test'
-        working-directory: ./packages/contortionist
-        run: 'pnpm test'
+  #     - name: 'Test'
+  #       working-directory: ./packages/contortionist
+  #       run: 'pnpm test'

@@ -3,12 +3,13 @@ import { LlamaCPPResponse, } from "./llms/endpoint-llms/llama-cpp-llm.js";
 
 export interface GenerationOutput {
   input_ids: Tensor;
-  attention_mask: any;
+  attention_mask: unknown;
 }
 
 export type OutputTokenIds = number[][];
 
-export type ModelProtocol = 'llama.cpp' | 'llamafile';
+export type ModelProtocol = 'llama.cpp';
+//  | 'llamafile';
 
 export interface ModelProtocolDefinition {
   endpoint: string;
@@ -29,7 +30,7 @@ export interface InternalExecuteOptions<M extends ModelProtocol> {
   n: number;
   grammar: string;
   stream: boolean;
-  streamCallback?: StreamCallback<M>;
+  callback?: StreamCallback<M>;
   internalSignal: AbortSignal;
   externalSignal?: AbortSignal;
 }
@@ -38,7 +39,7 @@ export type Execute<M extends ModelProtocol> = (opts: InternalExecuteOptions<M>)
 export interface ExternalExecuteOptions<M extends ModelProtocol> {
   n?: number;
   stream?: boolean;
-  streamCallback?: StreamCallback<M>;
+  callback?: StreamCallback<M>;
   signal?: AbortSignal;
 }
 export const DEFAULT_N = 20;

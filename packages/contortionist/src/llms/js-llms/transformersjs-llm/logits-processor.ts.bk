@@ -1,5 +1,5 @@
 import { Tensor, } from "@xenova/transformers";
-import { Tokenizer, } from "./tokenizer.js";
+import { Tokenizer, } from "./tokenizer.ts.bk";
 import { OutputTokenIds, StreamCallback, } from "../../../types.js";
 
 export class LogitsProcessor<R> {

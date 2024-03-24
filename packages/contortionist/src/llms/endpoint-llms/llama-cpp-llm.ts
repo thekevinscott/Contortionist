@@ -1,12 +1,13 @@
-import { InternalExecuteOptions, } from "../../types.js";
-import { Caller, } from "./caller.js";
+import { InternalExecuteOptions as _InternalExecuteOptions, } from "../../types.js";
+import { fetchAPI, } from "./fetch-api.js";
+
+type InternalExecuteOptions = _InternalExecuteOptions<'llama.cpp'>;
 
 interface LlamaCPPCallOpts {
   prompt: string;
   n_predict: number;
   grammar: string;
   stream: boolean;
-  signal: AbortSignal;
 }
 
 export interface LlamaCPPResponse {
@@ -80,49 +81,52 @@ export const isError = (response: LlamaCPPResponse | LlamaCPPError): response is
   return 'error' in response;
 };
 
-class LlamaCPPCaller extends Caller<LlamaCPPResponse> {
-  result?: LlamaCPPResponse;
-  override parseChunk = (chunk: string) => chunk.split('data:').pop()?.trim() || '';
-  override parseResult = (result: LlamaCPPResponse) => {
-    this.result = {
-      ...result,
-      content: (this.result?.content || '') + result.content,
-    };
-    this.partial += result.content;
-  };
-}
-
 export class LlamaCPPLLM {
   endpoint: string;
   constructor(endpoint: string) {
     this.endpoint = endpoint;
   };
 
-  buildOpts = ({
-    prompt,
-    n,
-    grammar,
-    stream,
-    internalSignal,
-    externalSignal,
-  }: InternalExecuteOptions<LlamaCPPResponse>): LlamaCPPCallOpts => ({
-    prompt,
-    n_predict: n,
-    grammar,
-    stream,
-    signal: externalSignal || internalSignal,
-  });
-
-  execute = async ({ streamCallback, ...opts }: InternalExecuteOptions<LlamaCPPResponse>) => {
-    const builtOpts = this.buildOpts(opts);
-    const caller = new LlamaCPPCaller(this.endpoint, streamCallback);
-    const response = await caller.fetch(this.endpoint, builtOpts) || caller.result;
-    if (!response) {
+  execute = async ({ prompt, callback: _callback, externalSignal, internalSignal, n, grammar, stream, }: InternalExecuteOptions) => {
+    const signal = externalSignal || internalSignal;
+    let partial = '';
+    const callback = (chunk: string) => {
+      if (_callback) {
+        const parsedChunk = parse(chunk);
+        partial += parsedChunk.content;
+        _callback({ partial, chunk: parsedChunk, });
+      }
+    };
+    const response = await fetchAPI<LlamaCPPCallOpts>({
+      endpoint: this.endpoint,
+      stream,
+      signal,
+      callback,
+      parseChunk: (chunk) => chunk.slice(5), // remove "data: "
+    }, {
+      prompt,
+      n_predict: n,
+      grammar,
+      stream,
+    });
+    if (!response.length) {
       throw new Error('No response, caller was never called');
     }
-    if (isError(response)) {
-      throw new Error(JSON.stringify(response.error));
+    const result = buildResponse(response);
+    if (isError(result)) {
+      throw new Error(JSON.stringify(result.error));
     }
-    return response.content;
+    return result.content;
   };
 }
+
+const parse = (chunk: string) => JSON.parse(chunk) as LlamaCPPResponse;
+
+export const buildResponse = (response: string[]): LlamaCPPResponse => {
+  const chunks = response.map(r => parse(r));
+  return chunks.slice(1).reduce<LlamaCPPResponse>((obj, r) => ({
+    ...obj,
+    ...r,
+    content: (obj.content || '') + r.content,
+  }), chunks[0]);
+};
