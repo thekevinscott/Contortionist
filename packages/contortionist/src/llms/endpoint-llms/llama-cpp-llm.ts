@@ -102,7 +102,7 @@ export class LlamaCPPLLM {
       stream,
       signal,
       callback,
-      parseChunk: (chunk) => chunk.slice(5), // remove "data: "
+      parseChunk,
     }, {
       prompt,
       n_predict: n,
@@ -120,7 +120,8 @@ export class LlamaCPPLLM {
   };
 }
 
-const parse = (chunk: string) => JSON.parse(chunk) as LlamaCPPResponse;
+export const parseChunk = (chunk: string) => chunk.slice(5); // remove "data: "
+export const parse = (chunk: string) => JSON.parse(chunk) as LlamaCPPResponse;
 
 export const buildResponse = (response: string[]): LlamaCPPResponse => {
   const chunks = response.map(r => parse(r));
