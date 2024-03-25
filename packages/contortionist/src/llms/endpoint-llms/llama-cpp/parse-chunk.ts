@@ -1,1 +1,2 @@
-export const parseChunk = (chunk: string) => chunk.slice(5); // remove "data: "
+// remove "data: " if it exists
+export const parseChunk = (chunk: string): string => chunk.match(/(data:|error:)?(.*)/).pop() || ''; 

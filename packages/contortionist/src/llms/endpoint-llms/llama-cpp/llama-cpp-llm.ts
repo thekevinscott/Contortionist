@@ -35,7 +35,7 @@ export class LlamaCPPLLM {
     });
     const result = buildResponse(response);
     if (isError(result)) {
-      throw new Error(JSON.stringify(result.error));
+      throw new Error(JSON.stringify(result));
     }
     return result.content;
   };

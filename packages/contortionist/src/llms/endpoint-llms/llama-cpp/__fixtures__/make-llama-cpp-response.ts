@@ -63,11 +63,8 @@ export const makeMockLlamaCPPResponse = (r: Partial<LlamaCPPResponse>): LlamaCPP
 });
 
 export const makeMockLlamaCPPError = (error: Partial<LlamaCPPError> = {}): LlamaCPPError => ({
+  code: 0,
+  message: 'message',
+  type: 'type',
   ...error,
-  error: {
-    code: 0,
-    message: 'message',
-    type: 'type',
-    ...error.error,
-  },
 });
