@@ -1,29 +1,6 @@
-interface FetchOpts {
-  parseChunk?: (chunk: string) => string;
-  endpoint: string;
-  stream: boolean;
-  signal: AbortSignal;
-  callback?: Callback;
-}
+const DEFAULT_PARSE_CHUNK = (chunk: string) => chunk;
 
 export type Callback = (chunk: string) => void;
-
-export async function fetchAPI<LLMOpts extends object>({ endpoint, stream, signal, callback, parseChunk, }: FetchOpts, llmOpts: LLMOpts): Promise<string[]> {
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', },
-    body: JSON.stringify(llmOpts),
-    signal,
-  });
-
-  if (stream) {
-    return parseStream(response, parseChunk, callback);
-  }
-
-  return [await response.text(),];
-};
-
-const DEFAULT_PARSE_CHUNK = (chunk: string) => chunk;
 
 export async function parseStream(response: Response, parseChunk = DEFAULT_PARSE_CHUNK, callback?: Callback): Promise<string[]> {
   if (!response.ok) {

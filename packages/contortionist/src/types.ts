@@ -1,5 +1,5 @@
 import { Tensor, TextGenerationPipeline, } from "@xenova/transformers";
-import { LlamaCPPResponse, } from "./llms/endpoint-llms/llama-cpp-llm.js";
+import { LlamaCPPResponse, } from "./llms/endpoint-llms/llama-cpp/llama-cpp-llm.js";
 
 export interface GenerationOutput {
   input_ids: Tensor;
@@ -31,8 +31,7 @@ export interface InternalExecuteOptions<M extends ModelProtocol> {
   grammar: string;
   stream: boolean;
   callback?: StreamCallback<M>;
-  internalSignal: AbortSignal;
-  externalSignal?: AbortSignal;
+  signal: AbortSignal;
 }
 export type Execute<M extends ModelProtocol> = (opts: InternalExecuteOptions<M>) => Promise<string>;
 
