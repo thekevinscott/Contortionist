@@ -7,8 +7,10 @@ const grammars = import.meta.glob('./grammars/*.gbnf', {
 });
 
 const model = {
-  protocol: 'llama.cpp',
-  endpoint: import.meta.env.VITE_LLAMACPP_ENDPOINT_URL,
+  // protocol: 'llama.cpp',
+  // endpoint: import.meta.env.VITE_LLAMACPP_ENDPOINT_URL,
+  protocol: 'llamafile',
+  endpoint: import.meta.env.VITE_LLAMAFILE_ENDPOINT_URL,
 };
 
 const form = document.getElementById('form');
