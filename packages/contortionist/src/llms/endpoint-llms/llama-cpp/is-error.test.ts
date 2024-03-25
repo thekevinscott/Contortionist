@@ -8,11 +8,9 @@ describe('isError', () => {
 
   test('it returns true if an error', () => {
     expect(isError({
-      error: {
-        code: 1,
-        message: 'message',
-        type: 'type',
-      }
+      code: 1,
+      message: 'message',
+      type: 'type',
     })).toBe(true);
   });
 });
