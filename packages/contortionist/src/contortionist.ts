@@ -1,4 +1,4 @@
-import { LlamaCPPLLM, } from "./llms/endpoint-llms/llama-cpp-llm.js";
+import { LlamaCPPLLM, } from "./llms/endpoint-llms/llama-cpp/llama-cpp-llm.js";
 import { getLLM, } from "./llms/index.js";
 import { ConstructorOptions, DEFAULT_N, ExternalExecuteOptions, Grammar, ModelDefinition, ModelProtocol, } from "./types.js";
 
@@ -68,8 +68,7 @@ export class Contortionist<M extends ModelProtocol> {
       callback,
       prompt,
       grammar: this._grammar,
-      internalSignal: this._abortController.signal,
-      externalSignal: signal,
+      signal: signal || this._abortController.signal,
     });
     return r;
   };
