@@ -69,9 +69,7 @@ export interface LlamaCPPResponse {
 }
 
 export interface LlamaCPPError {
-  error: {
-    code: number;
-    message: string;
-    type: string;
-  }
+  code: number;
+  message: string;
+  type: string;
 }

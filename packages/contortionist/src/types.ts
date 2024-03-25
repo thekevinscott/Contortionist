@@ -1,5 +1,5 @@
 import { Tensor, TextGenerationPipeline, } from "@xenova/transformers";
-import { LlamaCPPResponse, } from "./llms/endpoint-llms/llama-cpp/llama-cpp-llm.js";
+import { LlamaCPPResponse, } from "./llms/endpoint-llms/llama-cpp/types.js";
 
 export interface GenerationOutput {
   input_ids: Tensor;
