@@ -28,7 +28,7 @@
       "command": "eslint -c .eslintrc.cjs src --ext .ts"
     },
     "build": {
-      "command": "rimraf ./dist && vite build",
+      "command": "rimraf ./dist && vite build && cp ../../README.md ./README.md",
       "files": [
         "./src/**/*.json",
         "./src/**/*.ts",

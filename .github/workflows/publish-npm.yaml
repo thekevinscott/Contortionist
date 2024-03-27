@@ -40,11 +40,6 @@ jobs:
         working-directory: ./packages/contortionist
         run: pnpm install
 
-      - name: Copy the root README
-        # This way, we have a single copy of the README file at the root, but upon publishing
-        # can package it with the published package
-        run: cp ./README.md ./packages/contortionist/README.md
-
       - name: Build package
         working-directory: ./packages/contortionist
         run: pnpm build
