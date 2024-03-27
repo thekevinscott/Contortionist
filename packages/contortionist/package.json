@@ -2,25 +2,21 @@
   "name": "contortionist",
   "type": "module",
   "version": "0.0.7",
-  "main": "./dist/contortionist.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/thekevinscott/contortionist.git"
   },
+  "main": "./dist/index.umd.cjs",
+  "module": "./dist/index.js",
   "exports": {
-    ".": "./dist/contortionist.js"
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.umd.cjs"
+    }
   },
   "scripts": {
     "lint": "wireit",
     "test": "vitest",
-    "larkgenpython": "lark-js ./src/parsers/lark-parser/grammars/python/python.lark -o ./src/parsers/lark-parser/grammars/python/python-parser.js",
-    "lark-gen-json": "lark-js ./src/parsers/lark-parser/grammars/json/json.lark -o ./src/parsers/lark-parser/grammars/json/json-parser.js",
-    "genpython": "antlr4ng -Dlanguage=TypeScript -o ./src/parsers/antlr4-parser/grammars/Python3/generated -Xexact-output-dir -visitor ./src/parsers/antlr4-parser/grammars/Python3/Python3Lexer.g4 ./src/parsers/antlr4-parser/grammars/Python3/Python3Parser.g4",
-    "genkotlin": "antlr4ng -Dlanguage=TypeScript -o ./src/parsers/antlr4-parser/grammars/Kotlin/generated -Xexact-output-dir -visitor ./src/parsers/antlr4-parser/grammars/Kotlin/KotlinLexer.g4 ./src/parsers/antlr4-parser/grammars/Kotlin/KotlinParser.g4",
-    "genjs_backup": "antlr4ng -Dlanguage=TypeScript -o ./src/parsers/antlr4-parser/grammars/JavaScript/generated -Xexact-output-dir -visitor ./src/parsers/antlr4-parser/grammars/JavaScript/JavaScriptLexer.g4 ./src/parsers/antlr4-parser/grammars/JavaScript/JavaScriptParser.g4",
-    "genjs": "antlr4 -Dlanguage=JavaScript -o gen -o ./src/parsers/antlr4-parser/grammars/JavaScript/generated -Xexact-output-dir -visitor ./src/parsers/antlr4-parser/grammars/JavaScript/JavaScriptLexer.g4 ./src/parsers/antlr4-parser/grammars/JavaScript/JavaScriptParser.g4",
-    "genexpr": "antlr4ng -Dlanguage=TypeScript -o ./src/parsers/antlr4-parser/grammars/Expression/generated -Xexact-output-dir -visitor ./src/parsers/antlr4-parser/grammars/Expression/Expression.g4 ",
-    "compile": "antlr4 -Dlanguage=TypeScript Hello.g4 -o generated/",
     "build": "wireit"
   },
   "wireit": {
@@ -46,7 +42,7 @@
   "license": "MIT",
   "dependencies": {
     "@xenova/transformers": "^2.16.0",
-    "gbnf": "^0.0.1"
+    "gbnf": "latest"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.6",

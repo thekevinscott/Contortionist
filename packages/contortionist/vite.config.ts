@@ -1,22 +1,25 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig, } from 'vitest/config';
 import dts from 'vite-plugin-dts';
 
 export default defineConfig({
   build: {
-    sourcemap: true,
     lib: {
       entry: 'src/index.ts',
-      formats: ['es', 'umd'],
+      fileName: 'index',
+      formats: ['es', 'umd',],
       name: 'Contortionist',
-    }
+    },
+    sourcemap: true,
+    target: 'esnext',
+    minify: true,
   },
-  plugins: [dts()],
+  plugins: [dts(),],
   test: {
-    include: ['**/*.test.ts'],
+    include: ['**/*.test.ts',],
     globals: true,
     // ts
     typecheck: {
       tsconfig: './tsconfig.test.json',
-    }
+    },
   },
-})
+});
