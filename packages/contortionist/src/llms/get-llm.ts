@@ -1,7 +1,6 @@
 import {
-  ChosenLLM,
-  ModelDefinition,
-  ModelProtocol,
+  type ModelDefinition,
+  type ModelProtocol,
   modelIsProtocolDefinition,
 } from "../types.js";
 import {
@@ -10,17 +9,21 @@ import {
 } from "./endpoint-llms/index.js";
 // import { TransformersJSLLM } from "./js-llms/transformersjs-llm/transformersjs-llm.js";
 
-export function getLLM<M extends ModelProtocol>(model: ModelDefinition<M>): ChosenLLM<M> {
+const MODELS = {
+  'llamafile': LlamafileLLM,
+  'llama.cpp': LlamaCPPLLM,
+} as const;
+type ModelToLLMMap = {
+  [K in keyof typeof MODELS]: InstanceType<typeof MODELS[K]>;
+};
+
+export function getLLM<M extends ModelProtocol>(model: ModelDefinition<M>): ModelToLLMMap[M] {
   if (!modelIsProtocolDefinition(model)) {
     throw new Error('not yet implemented');
     //   return new TransformersJSLLM(model);
   }
-  if (model.protocol === "llama.cpp") {
-    return new LlamaCPPLLM(model.endpoint) as ChosenLLM<M>; // TODO: is there a way to avoid this explicit type cast?
+  if (!MODELS[model.protocol]) {
+    throw new Error(`Unsupported model protocol: ${model.protocol}`);
   }
-  if (model.protocol === "llamafile") {
-    return new LlamafileLLM(model.endpoint) as ChosenLLM<M>; // TODO: is there a way to avoid this explicit type cast?
-  }
-
-  throw new Error(`Unknown model definition: ${JSON.stringify(model)}`);
+  return new MODELS[model.protocol](model.endpoint) as ModelToLLMMap[M];
 };

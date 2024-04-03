@@ -4,15 +4,21 @@ import { parseChunk, } from './parse-chunk.js';
 import { isError, } from "./is-error.js";
 import { parse, } from "./parse.js";
 import { buildResponse, } from "./build-response.js";
-
-
-export class LlamaCPPLLM {
+import { ILLM, } from "../../../types.js";
+export class LlamaCPPLLM implements ILLM {
   endpoint: string;
   constructor(endpoint: string) {
     this.endpoint = endpoint;
   };
 
-  execute = async ({ prompt, callback: _callback, signal, n, grammar, stream, }: LlamaCPPExecuteOptions) => {
+  async execute<S extends boolean>({
+    prompt,
+    n,
+    stream,
+    callback: _callback,
+    grammar,
+    signal,
+  }: LlamaCPPExecuteOptions<S>) {
     let partial = '';
     const callback = (chunk: string) => {
       if (_callback) {
