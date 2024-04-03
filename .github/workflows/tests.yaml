@@ -126,4 +126,8 @@ jobs:
 
       - name: 'Build'
         working-directory: ./packages/contortionist
-        run: 'pnpm test'
+        run: 'pnpm build'
+
+      - name: 'Check build output'
+        working-directory: ./packages/contortionist
+        run: 'pnpm build:check'
