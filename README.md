@@ -7,7 +7,9 @@
 <a href="https://codecov.io/gh/thekevinscott/contortionist"><img alt="Code Coverage for contortionist" src="https://img.shields.io/codecov/c/github/thekevinscott/contortionist" /></a>
 <a href="https://deepsource.io/gh/thekevinscott/contortionist/?ref=repository-badge"><img alt="DeepSource issues for contortionist" src="https://deepsource.io/gh/thekevinscott/contortionist.svg/?label=active+issues&show_trend=true" /></a>
 
-A library for restricting what LLMs can and can't say.
+![alt text](./packages/contortionist/assets/eye.webp)
+
+Control what LLMs can, and can't, say.
 
 ## Install
 
