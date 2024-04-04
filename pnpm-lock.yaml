@@ -10,7 +10,7 @@ importers:
     dependencies:
       contortionist:
         specifier: latest
-        version: link:packages/contortionist
+        version: link:packages/contort
     devDependencies:
       '@types/jest':
         specifier: ^29.5.12
@@ -69,7 +69,7 @@ importers:
         specifier: ^0.14.0
         version: 0.14.4
 
-  packages/contortionist:
+  packages/contort:
     dependencies:
       '@xenova/transformers':
         specifier: ^2.16.0

@@ -35,11 +35,11 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        working-directory: ./packages/contortionist
+        working-directory: ./packages/contort
         run: pnpm install
 
       - name: 'Lint'
-        working-directory: ./packages/contortionist
+        working-directory: ./packages/contort
         run: 'pnpm lint'
 
   unit-test:
@@ -75,11 +75,11 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        working-directory: ./packages/contortionist
+        working-directory: ./packages/contort
         run: pnpm install
 
       - name: 'Test'
-        working-directory: ./packages/contortionist
+        working-directory: ./packages/contort
         run: 'pnpm test'
 
       - name: Upload coverage reports to Codecov
@@ -121,13 +121,13 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        working-directory: ./packages/contortionist
+        working-directory: ./packages/contort
         run: pnpm install
 
       - name: 'Build'
-        working-directory: ./packages/contortionist
+        working-directory: ./packages/contort
         run: 'pnpm build'
 
       - name: 'Check build output'
-        working-directory: ./packages/contortionist
+        working-directory: ./packages/contort
         run: 'pnpm build:check'

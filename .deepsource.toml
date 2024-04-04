@@ -1,13 +1,13 @@
 version = 1
 
 test_patterns = [
-  "packages/contortionist/src/**/*.ts",
+  "packages/contort/src/**/*.ts",
   "packages/contort/src/**/*.ts",
 ]
 
 exclude_patterns = [
-  "packages/contortionist/src/**/*.test.ts", 
-  "packages/contortionist/test/**/*.ts", 
+  "packages/contort/src/**/*.test.ts", 
+  "packages/contort/test/**/*.ts", 
   "packages/contort/src/**/*.test.ts", 
   "packages/contort/test/**/*.ts", 
   # "examples/**", 
