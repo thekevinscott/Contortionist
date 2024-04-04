@@ -55,12 +55,12 @@ export class Tokenizer {
   };
 
   decode = (tokenIds: number[][] | number[] | BigInt64Array): string => {
-    if (Array.isArray(tokenIds) && tokenIds.length > 0 && Array.isArray(tokenIds[0]) && typeof tokenIds[0][0] === 'number') {
+    if (isNestedNumberArray(tokenIds) && tokenIds.length > 0 && Array.isArray(tokenIds[0]) && typeof tokenIds[0][0] === 'number') {
       return (this.tokenizer.batch_decode)(tokenIds, {
         skip_special_tokens: true,
       })[0];
     }
-    if (Array.isArray(tokenIds) && tokenIds.length > 0 && typeof tokenIds[0] === 'number') {
+    if (isNumberArray(tokenIds) && tokenIds.length > 0 && typeof tokenIds[0] === 'number') {
       return this.tokenizer.decode(tokenIds, {
         skip_special_tokens: true,
       });
@@ -94,3 +94,5 @@ export class Tokenizer {
 }
 
 export const isString = (text: unknown): text is string => typeof text === 'string';
+const isNumberArray = (arr: unknown): arr is number[] => Array.isArray(arr) && typeof arr[0] === 'number';
+const isNestedNumberArray = (arr: unknown): arr is number[][] => Array.isArray(arr) && isNumberArray(arr[0]);
