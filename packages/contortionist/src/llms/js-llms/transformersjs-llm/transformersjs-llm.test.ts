@@ -56,7 +56,7 @@ describe('TransformersJSLLM', () => {
     expect(llm.pipeline).toBe(mockPipeline);
   });
 
-  test.only('it executes', async () => {
+  test('it executes', async () => {
 
     // vi.spyOn(Tokenizer.prototype, 'decode').mockImplementation(() => ['bar'])
     // Tokenizer.prototype.decode = vi.fn().mockImplementation(() => ['bar']);
