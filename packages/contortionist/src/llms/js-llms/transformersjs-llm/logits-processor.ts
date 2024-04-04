@@ -87,7 +87,8 @@ export class LogitsProcessor {
       // console.log('acceptable tokens', tokens.map(({ token, }) => token), tokens.map(({ id, }) => id));
 
       const acceptableTokenIds = Array.from(tokens).map(({ id, }) => id);
-      const data = logits.data as Float32Array;
+      // const data = logits.data as Float32Array;
+      const data = logits.data as unknown as Float32Array;
       const originalValues = new Map<number, number>();
       for (const tokenId of acceptableTokenIds) {
         originalValues.set(tokenId, data[tokenId]);
