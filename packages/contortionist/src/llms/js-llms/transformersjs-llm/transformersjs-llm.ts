@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 import type { PreTrainedModel, TextGenerationConfig, TextGenerationPipeline, } from "@xenova/transformers";
 import { LogitsProcessor, } from "./logits-processor.js";
 import { Tokenizer, } from "./tokenizer.js";
