@@ -12,7 +12,7 @@
       "command": "tsc -p ./tsconfig.json",
       "dependencies": [
         "../../packages/codesynth:build",
-        "../../packages/contortionist:build"
+        "../../packages/contort:build"
       ],
       "files": [
         "src/**/*.ts",

@@ -1,4 +1,4 @@
-import { Contortionist } from "../../../packages/contortionist/src/contortionist.js";
+import { Contortionist } from "../../../packages/contort/src/contortionist.js";
 
 const contortionllamafileNonStreaming = new Contortionist({ grammar: 'g', model: { endpoint: 'a', protocol: 'llamafile', }, });
 contortionllamafileNonStreaming.execute('p', {

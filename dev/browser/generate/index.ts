@@ -1,6 +1,6 @@
 import { pipeline } from '@xenova/transformers';
 // import { PreTrainedModel, TextGenerationConfig, TextGenerationPipeline, } from "@xenova/transformers";
-import Contortionist from '../../../packages/contortionist/src/index.js';
+import Contortionist from '../../../packages/contort/src/index.js';
 import '@vanillawc/wc-monaco-editor';
 const grammars = import.meta.glob('./grammars/*.gbnf', {
   eager: true,
