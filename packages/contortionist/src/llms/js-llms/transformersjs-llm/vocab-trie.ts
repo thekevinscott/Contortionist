@@ -1,5 +1,5 @@
 import { RuleChar, RuleCharExclude, RuleEnd, RuleType, } from 'gbnf';
-import { Tokenizer } from './tokenizer.js';
+import { Tokenizer, } from './tokenizer.js';
 type Rule = RuleCharExclude | RuleChar | RuleEnd;
 type Range = [number, number];
 export const isRange = (range?: unknown): range is Range => Array.isArray(range) && range.length === 2 && range.every(n => typeof n === 'number');
