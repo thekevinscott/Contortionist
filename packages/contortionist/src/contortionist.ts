@@ -11,9 +11,9 @@ import {
 } from "./types.js";
 
 export class Contortionist<M extends ModelProtocol> {
-  private _grammar?: Grammar;
+  grammar?: Grammar;
   // private _llm?: ChosenLLM<M>;
-  private _llm?: ILLM;
+  #llm?: Promise<ILLM>;
 
   /**
    * @hidden
@@ -39,20 +39,14 @@ export class Contortionist<M extends ModelProtocol> {
     this.llm = model;
   }
 
-  public get grammar() {
-    return this._grammar;
-  }
-  public set grammar(grammar: Grammar | undefined) {
-    this._grammar = grammar;
-  }
   public set llm(model: ModelDefinition<M> | undefined) {
-    this._llm = model ? getLLM<M>(model) : undefined;
+    this.#llm = (model ? getLLM<M>(model) : undefined) as Promise<ILLM> | undefined;
   }
-  public get llm(): ILLM {
-    if (!this._llm) {
+  public get llm(): Promise<ILLM> {
+    if (this.#llm === undefined) {
       throw new Error('You must set an LLM before running.');
     }
-    return this._llm;
+    return this.#llm;
   }
 
   /**
@@ -74,24 +68,26 @@ export class Contortionist<M extends ModelProtocol> {
    * contortionist.abort();
    * ```
    */
-  execute<S extends boolean>(prompt: Prompt<M>, {
+  async execute<S extends boolean>(prompt: Prompt<M>, {
     n = DEFAULT_N,
     stream,
     callback,
     signal,
   }: ExternalExecuteOptions<M, S>) {
-    if (!this._llm) {
+    const _llm = this.llm;
+    if (_llm === undefined) {
       throw new Error('You must set an LLM before running.');
     }
     if (stream === false && callback) {
       console.warn('streamCallback is ignored when stream is false');
     }
-    return this.llm.execute({
+    const llm = await _llm;
+    return llm.execute({
       prompt,
       n,
       stream: (callback && stream === undefined) ? true : !!stream,
       callback,
-      grammar: this._grammar,
+      grammar: this.grammar,
       signal: signal || this._abortController.signal,
     });
   };
