@@ -41,7 +41,7 @@ export interface ExternalExecuteOptions<M extends ModelProtocol, S extends boole
 }
 export const DEFAULT_N = 20;
 
-export interface ConstructorOptions<M extends ModelProtocol | undefined> {
+export interface ConstructorOptions<M extends ModelProtocol | undefined = undefined> {
   grammar?: Grammar;
   model?: ModelDefinition<M>;
 }
