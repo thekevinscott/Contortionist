@@ -73,7 +73,7 @@ export class Contortionist<M extends ModelProtocol> {
     stream,
     callback,
     signal,
-  }: ExternalExecuteOptions<M, S>) {
+  }: ExternalExecuteOptions<M, S>): Promise<string> {
     const _llm = this.llm;
     if (_llm === undefined) {
       throw new Error('You must set an LLM before running.');

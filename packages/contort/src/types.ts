@@ -71,5 +71,5 @@ export interface ILLM {
     n: number;
     grammar?: string;
     signal: AbortSignal;
-  }): void;
+  }): Promise<string>;
 }
