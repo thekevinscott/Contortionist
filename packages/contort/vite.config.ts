@@ -15,6 +15,9 @@ export default defineConfig({
   },
   plugins: [dts(),],
   test: {
+    coverage: {
+      provider: 'istanbul', // or 'v8'
+    },
     include: ['**/*.test.ts',],
     globals: true,
     // ts
