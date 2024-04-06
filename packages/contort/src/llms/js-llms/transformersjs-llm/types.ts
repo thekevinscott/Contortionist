@@ -6,16 +6,19 @@ import type {
   Callback as _Callback,
   InternalExecuteOptions,
 } from "../../../types.js";
-import type { LogitsProcessor, } from "./logits-processor.js";
+import type { GrammarLogitsProcessor, } from "./grammar-logits-processor.js";
 
 /** Re-type Transformers.js objects, since otherwise they throw errors */
-export type Tensor = {
-  data: BigInt64Array;
+export type Tensor<T = BigInt64Array> = {
+  data: T;
 } & Omit<_Tensor, 'data'>;
 export type GenerateFn = (
   inputIds: Tensor,
-  config: TextGenerationConfig,
-  logitsProcessor: LogitsProcessor,
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+  config: TextGenerationConfig & {
+    callback_function?: (beams: Beam[]) => void;
+  },
+  logitsProcessor: GrammarLogitsProcessor,
   options: { inputs_attention_mask: null | Tensor },
 ) => Promise<OutputTokenIds>;
 export type TokenizeFn = (
@@ -28,6 +31,21 @@ export type TokenizeFn = (
     max_length?: number;
     return_tensor?: boolean;
   }) => GenerationOutput;
+
+export interface Beam {
+  attention_mask: Tensor;
+  done: boolean;
+  id: number;
+  input: Tensor;
+  model_input_ids: Tensor;
+  num_output_tokens: number;
+  output_token_ids: number[];
+  prev_model_outputs: {
+    logits: Tensor;
+    past_key_values: Record<string, Tensor>;
+  };
+  score: number;
+}
 // export interface DecodeArgs {
 //   skip_special_tokens?: boolean; clean_up_tokenization_spaces?: boolean
 // }
@@ -56,10 +74,11 @@ export interface TransformersJSError {
 }
 
 
-export interface TransformersJSResponse {
-  inputTokens: number[];
-  logits: Tensor;
-}
+export type TransformersJSResponse = Beam;
+// export interface TransformersJSResponse {
+//   inputTokens: number[];
+//   logits: Tensor;
+// }
 
 export interface GenerationOutput {
   input_ids: Tensor;

@@ -31,8 +31,6 @@ export class Tokenizer {
     //   padding: true,
     //   truncation: true,
     // };
-
-    // this.initialize();
   }
 
   get tokenizer(): PreTrainedTokenizer {
@@ -55,17 +53,20 @@ export class Tokenizer {
   };
 
   decode = (tokenIds: number[][] | number[] | BigInt64Array): string => {
-    if (isNestedNumberArray(tokenIds) && tokenIds.length > 0 && Array.isArray(tokenIds[0]) && typeof tokenIds[0][0] === 'number') {
+    if (tokenIds.length === 0) {
+      throw new Error('tokenIds is empty');
+    }
+    if (isNestedNumberArray(tokenIds)) {
       return (this.tokenizer.batch_decode)(tokenIds, {
         skip_special_tokens: true,
       })[0];
     }
-    if (isNumberArray(tokenIds) && tokenIds.length > 0 && typeof tokenIds[0] === 'number') {
+    if (isNumberArray(tokenIds)) {
       return this.tokenizer.decode(tokenIds, {
         skip_special_tokens: true,
       });
     }
-    if (tokenIds instanceof BigInt64Array && tokenIds.length > 0) {
+    if (isBigInt64Array(tokenIds)) {
       const tokenIdsArray = Array.from(tokenIds).map(t => Number(t.toString()));
       return this.tokenizer.decode(tokenIdsArray, {
         skip_special_tokens: true,
@@ -96,3 +97,4 @@ export class Tokenizer {
 export const isString = (text: unknown): text is string => typeof text === 'string';
 const isNumberArray = (arr: unknown): arr is number[] => Array.isArray(arr) && typeof arr[0] === 'number';
 const isNestedNumberArray = (arr: unknown): arr is number[][] => Array.isArray(arr) && isNumberArray(arr[0]);
+const isBigInt64Array = (arr: unknown): arr is BigInt64Array => arr instanceof BigInt64Array;
