@@ -14,7 +14,10 @@ export type Tensor<T = BigInt64Array> = {
 } & Omit<_Tensor, 'data'>;
 export type GenerateFn = (
   inputIds: Tensor,
-  config: TextGenerationConfig,
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+  config: TextGenerationConfig & {
+    callback_function?: (beams: Beam[]) => void;
+  },
   logitsProcessor: GrammarLogitsProcessor,
   options: { inputs_attention_mask: null | Tensor },
 ) => Promise<OutputTokenIds>;
