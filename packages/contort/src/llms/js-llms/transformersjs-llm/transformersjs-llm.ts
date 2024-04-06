@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 import type {
   PreTrainedModel,
-  TextGenerationConfig,
   TextGenerationPipeline,
 } from "@xenova/transformers";
 import { GrammarLogitsProcessor, } from "./grammar-logits-processor.js";
@@ -44,7 +43,7 @@ export class TransformersJSLLM {
         });
       }
     } : undefined;
-    const generate_kwargs: TextGenerationConfig = {
+    const generate_kwargs = {
       temperature: DEFAULT_TEMPERATURE,
       // ...opts,
       max_new_tokens: n,
