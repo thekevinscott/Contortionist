@@ -72,7 +72,7 @@ export class Contortionist<M extends ModelProtocol> {
     n = DEFAULT_N,
     stream,
     callback,
-    signal,
+    signal: signal,
   }: ExternalExecuteOptions<M, S>): Promise<string> {
     const _llm = this.llm;
     if (_llm === undefined) {
@@ -88,8 +88,24 @@ export class Contortionist<M extends ModelProtocol> {
       stream: (callback && stream === undefined) ? true : !!stream,
       callback,
       grammar: this.grammar,
-      signal: signal || this._abortController.signal,
+      signal: this.#getSignal(signal),
     });
+  };
+
+  #getSignal = (signal?: AbortSignal) => {
+    if (!signal) {
+      return this._abortController.signal;
+    }
+
+    return signal;
+
+    // this._abortController.signal.addEventListener(
+    //   'abort',
+    //   () => {
+    //     controller.abort(secondSignal.reason);
+    //   },
+    //   { signal: controller.signal }
+    // );
   };
 
   /**

@@ -30,7 +30,6 @@ export async function parseStream(response: Response, parseChunk = DEFAULT_PARSE
       chunks.push(parsedChunk);
       chunk = '';
     } catch (err) {
-
     }
   }
   return chunks;

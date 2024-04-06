@@ -44,5 +44,5 @@ export class LlamaCPPLLM implements ILLM {
       throw new Error(JSON.stringify(result));
     }
     return result.content;
-  };
+  }
 }
