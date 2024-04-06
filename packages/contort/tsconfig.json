@@ -5,13 +5,7 @@
     "outDir": "./dist",
     "rootDir": "./src"
   },
-  "include": [
-    "./src/**/*.ts",
-    "src/llms/js-llms/transformersjs-llm/transformersjs-llm.ts.bk",
-    "src/llms/js-llms/transformersjs-llm/tokenizer.ts.bk",
-    "src/llms/endpoint-llms/llamafile-llm.ts.bk",
-    "src/llms/abstract-llm.ts.bk"
-  ],
+  "include": ["./src/**/*.ts"],
   "exclude": [
     "node_modules",
     ".vscode-test",
