@@ -2,7 +2,7 @@ import { Tokenizer, } from "./tokenizer.js";
 import GBNF, { ParseState, } from 'gbnf';
 import { Token, VocabTrie, } from "./vocab-trie.js";
 import { Callback, Tensor, } from "./types.js";
-import { maskLogits } from "./mask-logits.js";
+import { maskLogits, } from "./mask-logits.js";
 
 // type TokenIds = number[];
 

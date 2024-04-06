@@ -1,8 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
-import type { PreTrainedModel, Tensor, TextGenerationConfig, TextGenerationOutput, TextGenerationPipeline, TextGenerationPipelineCallback, } from "@xenova/transformers";
+import type {
+  PreTrainedModel,
+  TextGenerationConfig,
+  TextGenerationPipeline,
+} from "@xenova/transformers";
 import { GrammarLogitsProcessor, } from "./grammar-logits-processor.js";
 import { Tokenizer, } from "./tokenizer.js";
-import type { Beam, GenerateFn, TransformersJSExecuteOptions, } from "./types.js";
+import type {
+  Beam,
+  GenerateFn,
+  TransformersJSExecuteOptions,
+} from "./types.js";
 import { VocabTrie, } from "./vocab-trie.js";
 
 export const DEFAULT_TEMPERATURE = 0.5;
