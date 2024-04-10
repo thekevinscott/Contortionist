@@ -11,6 +11,7 @@ import {
   makeNonStreamingLlamafileResponse,
   makeStreamingLlamafileResponse,
 } from "../../__mocks__/mock-llamafile-response.js";
+import { buildContortionist } from "../../utils/build-contortionist.js";
 
 setLogLevel('warn')
 const configureNonStreamingServer = (content: string) => _configureNonStreamingServer(content, makeNonStreamingLlamafileResponse);
@@ -18,6 +19,7 @@ const configureStreamingServer = (content: string, n: number) => _configureStrea
 
 describe('llamafile', async () => {
   let _mockLLMAPI: MockLLMAPI;
+  beforeAll(() => buildContortionist());
 
   afterEach(async () => {
     await Promise.all([

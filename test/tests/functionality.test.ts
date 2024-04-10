@@ -14,6 +14,7 @@ import {
   configureStreamingServer as _configureStreamingServer,
 } from "../utils/bootstrap-server-mock.js";
 import MockLLMAPI from "../utils/mock-llm-api.js";
+import { buildContortionist } from "../utils/build-contortionist.js";
 
 setLogLevel('warn')
 const configureNonStreamingServer = (content: string) => _configureNonStreamingServer(content, makeLlamaCPPResponse);
@@ -21,6 +22,8 @@ const configureStreamingServer = (content: string, n: number) => _configureStrea
 
 describe('llama.cpp', async () => {
   let _mockLLMAPI: MockLLMAPI;
+
+  beforeAll(() => buildContortionist());
 
   afterEach(async () => {
     await Promise.all([

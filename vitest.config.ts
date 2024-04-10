@@ -7,6 +7,7 @@ export default defineConfig({
     hookTimeout: 10000,
     include: [
       'test/tests/**/*.test.ts',
+      'src/packages/contortionist/**/*.ts',
     ],
     exclude: [
       // 'packages/**/*.test.*',
