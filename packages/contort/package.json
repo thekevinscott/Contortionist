@@ -79,7 +79,7 @@
   ],
   "dependencies": {
     "@xenova/transformers": "^2.16.0",
-    "gbnf": "^0.0.9"
+    "gbnf": "^0.1.2"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.6",
