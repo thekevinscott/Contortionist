@@ -132,7 +132,7 @@ jobs:
       # will be pre-cached
       - name: Pre-build
         working-directory: ./packages/contort
-        run: pnpm build
+        run: pnpm build && pnpm install
 
       - name: 'Test'
         run: 'pnpm test'
