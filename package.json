@@ -7,28 +7,23 @@
     "url": "https://github.com/thekevinscott/codesynth.git"
   },
   "scripts": {
-    "test": "wireit"
+    "test": "vitest --config ./vitest.config.ts"
   },
-  "wireit": {
-    "test": {
-      "command": "vitest --config ./vitest.config.ts",
-      "dependencies": [
-        "./packages/mock-llm-api:build",
-        "./packages/contort:build"
-      ]
-    }
-  },
+  "wireit": {},
   "keywords": [],
   "author": "Kevin Scott",
   "license": "MIT",
   "dependencies": {
-    "contort": "workspace:*",
-    "mock-llm-api": "workspace:*"
+    "contort": "workspace:*"
   },
   "devDependencies": {
+    "@schemastore/package": "^0.0.10",
     "@types/jest": "^29.5.12",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "playwright": "^1.43.0",
     "rimraf": "^5.0.5",
-    "testeroni": "^0.0.1",
+    "testeroni": "^0.0.16",
     "tslib": "^2.6.2",
     "typescript": "^5.3.3",
     "vitest": "^1.4.0",

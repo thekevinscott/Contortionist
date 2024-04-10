@@ -15,6 +15,7 @@
     }
   },
   "scripts": {
+    "copy:package-files": "wireit",
     "lint": "wireit",
     "test": "vitest",
     "build": "wireit",
@@ -33,12 +34,25 @@
       "command": "tsc"
     },
     "build:umd": {
-      "command": "vite build"
+      "command": "vite build",
+      "files": [
+        "./src/**/*.ts",
+        "package.json",
+        "vite.config.ts",
+        "tsconfig.json"
+      ],
+      "output": [
+        "./dist/index.umd.cjs"
+      ]
+    },
+    "copy:package-files": {
+      "command": "cp ../../README.md ./README.md && cp ../../LICENSE ./LICENSE"
     },
     "build": {
-      "command": "rimraf ./dist && pnpm build:umd && pnpm build:esm && cp ../../README.md ./README.md && cp ../../LICENSE ./LICENSE",
+      "command": "rimraf ./dist && pnpm build:umd && pnpm build:esm && pnpm copy:package-files && pnpm build:check",
       "files": [
         "../../README.md",
+        "../../LICENSE",
         "./src/**/*.ts",
         "package.json",
         "vite.config.ts",
@@ -46,6 +60,7 @@
       ],
       "output": [
         "./dist/**",
+        "./LICENSE",
         "./README.md"
       ]
     }

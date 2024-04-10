@@ -3,15 +3,16 @@ import path from 'path';
 
 export default defineConfig({
   test: {
+    testTimeout: 1000,
+    hookTimeout: 10000,
     include: [
-      'test/**.test.ts',
+      'test/tests/**/*.test.ts',
     ],
     exclude: [
       // 'packages/**/*.test.*',
     ],
     watchExclude: [
-      // '**/*.json',
-      // 'tmp/**/*',
+      'tmp/**/*',
     ],
     globals: true,
     typecheck: {

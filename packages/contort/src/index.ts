@@ -8,3 +8,7 @@ export type {
   ExternalExecuteOptions,
   ModelProtocol,
 } from './types.js';
+
+export type {
+  LlamaCPPResponse,
+} from './llms/endpoint-llms/llama-cpp/types.js';
