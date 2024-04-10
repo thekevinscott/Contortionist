@@ -126,7 +126,7 @@ jobs:
           detached: true
 
       - name: Install dependencies
-        run: pnpm install && pnpm exec playwright install
+        run: pnpm install && pnpx playwright install-deps && pnpm exec playwright install
 
       # This should slightly speed up the subsequent test command, as the build
       # will be pre-cached

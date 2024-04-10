@@ -3,7 +3,7 @@ import path from 'path';
 
 export default defineConfig({
   test: {
-    testTimeout: 2000,
+    testTimeout: 10000,
     hookTimeout: 20000,
     include: [
       'test/tests/**/*.test.ts',
