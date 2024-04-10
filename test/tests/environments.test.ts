@@ -89,8 +89,6 @@ describe('llama.cpp', async () => {
     });
 
     test('it should return a streaming response', async () => {
-
-
       const content = 'abc';
       const n = 3;
       const { mockLLMAPI } = configureStreamingServer(content, n);
@@ -105,8 +103,6 @@ describe('llama.cpp', async () => {
     });
 
     test('it should callback with a streaming response', async () => {
-
-
       const n = 3;
       const content = 'abc';
       const { mockLLMAPI } = configureStreamingServer(content, n);
@@ -125,8 +121,6 @@ describe('llama.cpp', async () => {
     });
 
     test('it should abort', async () => {
-
-
       const n = 3;
       const content = 'abc';
       const { mockLLMAPI } = configureStreamingServer(content, n);
