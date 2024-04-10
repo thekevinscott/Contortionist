@@ -31,7 +31,16 @@
       "command": "path-exists ./dist/index.js && path-exists ./dist/index.umd.cjs && path-exists ./dist/index.d.ts "
     },
     "build:esm": {
-      "command": "tsc"
+      "command": "tsc",
+      "files": [
+        "./src/**/*.ts",
+        "package.json",
+        "vite.config.ts",
+        "tsconfig.json"
+      ],
+      "output": [
+        "./dist/**/*"
+      ]
     },
     "build:umd": {
       "command": "vite build",
@@ -42,24 +51,26 @@
         "tsconfig.json"
       ],
       "output": [
-        "./dist/index.umd.cjs"
+        "./dist/**/*"
       ]
     },
     "copy:package-files": {
       "command": "cp ../../README.md ./README.md && cp ../../LICENSE ./LICENSE"
     },
     "build": {
-      "command": "rimraf ./dist && pnpm build:umd && pnpm build:esm && pnpm copy:package-files && pnpm build:check",
+      "command": "pnpm copy:package-files && pnpm build:check",
+      "dependencies": [
+        "build:umd",
+        "build:esm"
+      ],
       "files": [
         "../../README.md",
         "../../LICENSE",
-        "./src/**/*.ts",
         "package.json",
         "vite.config.ts",
         "tsconfig.json"
       ],
       "output": [
-        "./dist/**",
         "./LICENSE",
         "./README.md"
       ]

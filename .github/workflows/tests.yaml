@@ -128,6 +128,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install && pnpm exec playwright install
 
+      # This should slightly speed up the subsequent test command, as the build
+      # will be pre-cached
+      - name: Pre-build
+        working-directory: ./packages/contort
+        run: pnpm build
+
       - name: 'Test'
         run: 'pnpm test'
 
