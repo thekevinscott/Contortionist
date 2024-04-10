@@ -19,6 +19,7 @@
   "devDependencies": {
     "@schemastore/package": "^0.0.10",
     "@types/jest": "^29.5.12",
+    "@xenova/transformers": "^2.16.1",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "playwright": "^1.43.0",
