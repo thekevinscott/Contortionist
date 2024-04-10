@@ -68,7 +68,7 @@ describe('llama.cpp', async () => {
       const abortController = new AbortController();
       const resultFn = vi.fn();
       const [resolveCatchPromise, catchPromise] = makePromise();
-      const catchFn = vi.fn().mockImplementation((err) => {
+      const catchFn = vi.fn().mockImplementation(() => {
         resolveCatchPromise();
       });
       contortionist.execute('prompt', {
@@ -142,7 +142,7 @@ describe('llama.cpp', async () => {
       const abortController = new AbortController();
       const resultFn = vi.fn();
       const [resolveCatchPromise, catchPromise] = makePromise();
-      const catchFn = vi.fn().mockImplementation((err) => {
+      const catchFn = vi.fn().mockImplementation(() => {
         resolveCatchPromise();
       });
       const callback = vi.fn();

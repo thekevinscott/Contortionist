@@ -49,6 +49,14 @@ describe('llama.cpp', async () => {
       module: true,
     });
 
+    beforeAll(async function beforeAll() {
+      await nodeRunner.beforeAll(() => bundle('node', outDir, {
+        dependencies: {
+          'contort': 'workspace:*',
+        }
+      }));
+    });
+
     afterAll(() => Promise.all([
       rimraf(outDir),
     ]));
@@ -69,8 +77,6 @@ describe('llama.cpp', async () => {
     };
 
     test('it should return a non-streaming response', async () => {
-
-
       const content = 'FOO BAR!';
       const { mockLLMAPI } = configureNonStreamingServer(content);
       _mockLLMAPI = mockLLMAPI;

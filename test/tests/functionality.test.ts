@@ -73,7 +73,7 @@ describe('llama.cpp', async () => {
         const abortController = new AbortController();
         const resultFn = vi.fn();
         const [resolveCatchPromise, catchPromise] = makePromise();
-        const catchFn = vi.fn().mockImplementation((err) => {
+        const catchFn = vi.fn().mockImplementation(() => {
           resolveCatchPromise();
         });
         contortionist.execute('prompt', {
@@ -111,7 +111,7 @@ describe('llama.cpp', async () => {
         const abortController = new AbortController();
         const resultFn = vi.fn();
         const [resolveCatchPromise, catchPromise] = makePromise();
-        const catchFn = vi.fn().mockImplementation((err) => {
+        const catchFn = vi.fn().mockImplementation(() => {
           resolveCatchPromise();
         });
         const requests = [
@@ -165,7 +165,7 @@ describe('llama.cpp', async () => {
         let catchCount = 0;
         for (let i = 0; i < 3; i++) {
           resultFns.push(vi.fn());
-          catchFns.push(vi.fn().mockImplementation((err) => {
+          catchFns.push(vi.fn().mockImplementation(() => {
             catchCount += 1;
             if (catchCount === 3) {
               resolveCatchPromise();
@@ -262,7 +262,7 @@ describe('llama.cpp', async () => {
         const abortController = new AbortController();
         const resultFn = vi.fn();
         const [resolveCatchPromise, catchPromise] = makePromise();
-        const catchFn = vi.fn().mockImplementation((err) => {
+        const catchFn = vi.fn().mockImplementation(() => {
           resolveCatchPromise();
         });
         const callback = vi.fn();

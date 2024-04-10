@@ -1,4 +1,3 @@
-import { makeLlamaCPPResponse } from "../__mocks__/mock-llama-cpp-response.js";
 import MockLLMAPI from "./mock-llm-api.js";
 
 type MakeResponse<R> = (opts: { content: string; }) => R;
