@@ -1,4 +1,4 @@
-import { BundleOptions, BundlerName, bundle as _bundle, } from 'testeroni';
+import { bundle as _bundle, } from 'testeroni';
 import path from 'path';
 import * as url from 'url';
 import util from 'util';
@@ -10,15 +10,6 @@ const ROOT = path.resolve(__dirname, '../..');
 const CONTORT_DIR = path.resolve(ROOT, 'packages/contort');
 
 export async function bundle(bundlerName: string, outDir: string, args: Parameters<typeof _bundle>[2] = {}) {
-  // spawn('pnpm build', { 
-  //   stdio: 'inherit',
-  //  });
-
-  // const { stdout, stderr } = await exec('pnpm build', {
-  //   cwd: CONTORT_DIR,
-  // });
-  // console.log('stdout', stdout);
-
   // Build Contortionist
   await exec('pnpm build', {
     cwd: CONTORT_DIR,
@@ -26,7 +17,7 @@ export async function bundle(bundlerName: string, outDir: string, args: Paramete
 
   // bundle the app
   if (bundlerName !== 'umd') {
-    // args.isPackageInstallSilent = true;
+    args.silentPackageInstall = true;
   }
   await _bundle(bundlerName, outDir, args);
 }
