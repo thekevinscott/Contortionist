@@ -1,25 +1,26 @@
 import { makeLlamaCPPResponse } from "../__mocks__/mock-llama-cpp-response.js";
 import MockLLMAPI from "./mock-llm-api.js";
 
-export const configureNonStreamingServer = (content: string) => {
+type MakeResponse<R> = (opts: { content: string; }) => R;
+export function configureNonStreamingServer<R>(content: string, makeResponse: MakeResponse<R>) {
   const mockLLMAPI = new MockLLMAPI();
   const endpoint = `http://localhost:${mockLLMAPI.port}/completion`;
 
   mockLLMAPI.app.post('/completion', (req, res) => {
-    res.send(`${JSON.stringify(makeLlamaCPPResponse({
+    res.send(`${JSON.stringify(makeResponse({
       content,
     }))}`);
   });
   return { endpoint, mockLLMAPI, };
 };
 
-export const configureStreamingServer = (content: string, n: number) => {
+export function configureStreamingServer<R>(content: string, n: number, makeResponse: MakeResponse<R>) {
   const mockLLMAPI = new MockLLMAPI();
   const endpoint = `http://localhost:${mockLLMAPI.port}/completion`;
 
   mockLLMAPI.app.post('/completion', async (req, res) => {
     for (let i = 0; i < n; i++) {
-      res.write(`data: ${JSON.stringify(makeLlamaCPPResponse({
+      res.write(`data: ${JSON.stringify(makeResponse({
         content: `${content[i]}`,
       }))}\n`);
 

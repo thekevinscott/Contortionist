@@ -31,8 +31,8 @@ importers:
         specifier: ^5.0.5
         version: 5.0.5
       testeroni:
-        specifier: ^0.0.16
-        version: 0.0.16
+        specifier: ^0.0.17
+        version: 0.0.17
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -1297,6 +1297,7 @@ packages:
 
   /@types/commander@2.12.2:
     resolution: {integrity: sha512-0QEFiR8ljcHp9bAbWxecjVRuAMr16ivPiGOw6KFQBVrVd0RQIcM3xKdRisH2EDWgVWujiYtHwhSkSUoAAGzH7Q==}
+    deprecated: This is a stub types definition for commander (https://github.com/tj/commander.js). commander provides its own type definitions, so you don't need @types/commander installed!
     dependencies:
       commander: 11.1.0
     dev: true
@@ -2827,6 +2828,7 @@ packages:
   /ejs@3.1.9:
     resolution: {integrity: sha512-rC+QVNMJWv+MtPgkt0y+0rVEIdbtxVADApW9JXrUVlzHetgcyczP/E7DJmWJ4fJCZF2cPcBk0laWO9ZHMG3DmQ==}
     engines: {node: '>=0.10.0'}
+    hasBin: true
     dependencies:
       jake: 10.8.7
     dev: true
@@ -2949,6 +2951,7 @@ packages:
   /esbuild@0.20.2:
     resolution: {integrity: sha512-WdOOppmUNU+IbZ0PaDiTst80zjnrOkyJNHoKupIcVyU8Lvla3Ugx94VzkQ32Ijqd7UhHJy75gNWDMUekcrSJ6g==}
     engines: {node: '>=12'}
+    hasBin: true
     requiresBuild: true
     optionalDependencies:
       '@esbuild/aix-ppc64': 0.20.2
@@ -3624,6 +3627,7 @@ packages:
   /html-minifier-terser@6.1.0:
     resolution: {integrity: sha512-YXxSlJBZTP7RS3tWnQw74ooKa6L9b9i9QYXY21eUEvhZ3u9XLfv6OnFsQq6RxkhHygsaUMvYsZRV5rU/OVNZxw==}
     engines: {node: '>=12'}
+    hasBin: true
     dependencies:
       camel-case: 4.1.2
       clean-css: 5.3.3
@@ -4002,6 +4006,7 @@ packages:
   /jake@10.8.7:
     resolution: {integrity: sha512-ZDi3aP+fG/LchyBzUM804VjddnwfSfsdeYkwt8NcbKRvo4rFkjhs456iLFn3k2ZUWvNe4i48WACDbza8fhq2+w==}
     engines: {node: '>=10'}
+    hasBin: true
     dependencies:
       async: 3.2.5
       chalk: 4.1.2
@@ -4417,6 +4422,7 @@ packages:
 
   /mkdirp@0.5.6:
     resolution: {integrity: sha512-FP+p8RB8OWpF3YZBCrP5gtADmtXApB5AMLn+vdyA+PyxCjrCs00mjyUozssO33cwDeT3wNGdLxJ5M//YqtHAJw==}
+    hasBin: true
     dependencies:
       minimist: 1.2.8
     dev: true
@@ -5755,6 +5761,7 @@ packages:
   /terser@5.30.3:
     resolution: {integrity: sha512-STdUgOUx8rLbMGO9IOwHLpCqolkDITFFQSMYYwKE1N2lY6MVSaeoi10z/EhWxRc6ybqoVmKSkhKYH/XUpl7vSA==}
     engines: {node: '>=10'}
+    hasBin: true
     dependencies:
       '@jridgewell/source-map': 0.3.6
       acorn: 8.11.3
@@ -5771,9 +5778,10 @@ packages:
       minimatch: 3.1.2
     dev: true
 
-  /testeroni@0.0.16:
-    resolution: {integrity: sha512-Hp5Qq03wGbosUGf11bsCNTPUJdRYI41XNkRG7L+mn5v/8G3xO7DLFjtAYF5MNYn2yZZqoA+3h5Qbez882PQ56A==}
+  /testeroni@0.0.17:
+    resolution: {integrity: sha512-JjMU2REFgI3QfJ+bbnnO2rwuT3aJRmydzmKeAMAkGIq9yY/vblb2Rfizg2QrfCHjq0UiBqDzDtPcmSBYXh6qpg==}
     engines: {node: '>=20.0.0'}
+    hasBin: true
     dependencies:
       '@schemastore/package': 0.0.10
       chalk: 5.3.0
@@ -5908,6 +5916,7 @@ packages:
 
   /tunnelmole@2.2.14:
     resolution: {integrity: sha512-ZtYsNRBQhqjZR665EjMf/XMOAuBDq6AJDHIE+9G9bU0GIR+Mg8pFUQ4mnkSeOIpErRu0S4KjTMvG9VZPCijcnw==}
+    hasBin: true
     requiresBuild: true
     dependencies:
       '@types/commander': 2.12.2

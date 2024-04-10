@@ -11,21 +11,27 @@
  */
 
 import { rimraf } from "rimraf";
-import { vi, } from "vitest";
 import { chromium, } from 'playwright';
 import { makeTmpDir, ClientsideTestRunner, ServersideTestRunner, SupportedDriver, setLogLevel, } from 'testeroni';
 import path from 'path';
 import * as url from 'url';
 import { main as contortionistUMDFilePath } from '../../packages/contort/package.json' assert { type: "json" };
 import { bundle } from "../utils/bundle-wrapper.js";
-import { configureNonStreamingServer, configureStreamingServer } from "../utils/bootstrap-server-mock.js";
+import {
+  configureNonStreamingServer as _configureNonStreamingServer,
+  configureStreamingServer as _configureStreamingServer,
+} from "../utils/bootstrap-server-mock.js";
 import MockLLMAPI from "../utils/mock-llm-api.js";
+import { makeLlamaCPPResponse } from "../__mocks__/mock-llama-cpp-response.js";
 
 setLogLevel('warn')
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 const ROOT = path.resolve(__dirname, '../..');
 const TMP = path.resolve(ROOT, 'tmp');
+
+const configureNonStreamingServer = (content: string) => _configureNonStreamingServer(content, makeLlamaCPPResponse);
+const configureStreamingServer = (content: string, n: number) => _configureStreamingServer(content, n, makeLlamaCPPResponse);
 
 describe('llama.cpp', async () => {
   let _mockLLMAPI: MockLLMAPI;

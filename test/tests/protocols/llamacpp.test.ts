@@ -3,12 +3,17 @@ import { vi, } from "vitest";
 import { setLogLevel, } from 'testeroni';
 import {
   makeLlamaCPPResponse,
-} from "../__mocks__/mock-llama-cpp-response.js";
-import { makePromise } from "../utils/make-promise.js";
-import { configureNonStreamingServer, configureStreamingServer } from "../utils/bootstrap-server-mock.js";
-import MockLLMAPI from "../utils/mock-llm-api.js";
+} from "../../__mocks__/mock-llama-cpp-response.js";
+import { makePromise } from "../../utils/make-promise.js";
+import {
+  configureNonStreamingServer as _configureNonStreamingServer,
+  configureStreamingServer as _configureStreamingServer,
+} from "../../utils/bootstrap-server-mock.js";
+import MockLLMAPI from "../../utils/mock-llm-api.js";
 
 setLogLevel('warn')
+const configureNonStreamingServer = (content: string) => _configureNonStreamingServer(content, makeLlamaCPPResponse);
+const configureStreamingServer = (content: string, n: number) => _configureStreamingServer(content, n, makeLlamaCPPResponse);
 
 describe('llama.cpp', async () => {
   let _mockLLMAPI: MockLLMAPI;
