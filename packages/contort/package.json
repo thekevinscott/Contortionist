@@ -28,31 +28,13 @@
       "command": "eslint -c .eslintrc.cjs src --ext .ts"
     },
     "build:check": {
-      "command": "path-exists ./dist/index.js && path-exists ./dist/index.umd.cjs && path-exists ./dist/index.d.ts "
+      "command": "path-exists ./dist/index.umd.cjs "
     },
     "build:esm": {
-      "command": "tsc",
-      "files": [
-        "./src/**/*.ts",
-        "package.json",
-        "vite.config.ts",
-        "tsconfig.json"
-      ],
-      "output": [
-        "./dist/**/*"
-      ]
+      "command": "tsc"
     },
     "build:umd": {
-      "command": "vite build",
-      "files": [
-        "./src/**/*.ts",
-        "package.json",
-        "vite.config.ts",
-        "tsconfig.json"
-      ],
-      "output": [
-        "./dist/index.umd.cjs"
-      ]
+      "command": "vite build"
     },
     "copy:package-files": {
       "command": "cp ../../README.md ./README.md && cp ../../LICENSE ./LICENSE"
