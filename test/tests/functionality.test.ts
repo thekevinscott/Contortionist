@@ -9,10 +9,15 @@ import {
   makeLlamaCPPResponse,
 } from "../__mocks__/mock-llama-cpp-response.js";
 import { makePromise } from "../utils/make-promise.js";
-import { configureNonStreamingServer, configureStreamingServer } from "../utils/bootstrap-server-mock.js";
+import {
+  configureNonStreamingServer as _configureNonStreamingServer,
+  configureStreamingServer as _configureStreamingServer,
+} from "../utils/bootstrap-server-mock.js";
 import MockLLMAPI from "../utils/mock-llm-api.js";
 
 setLogLevel('warn')
+const configureNonStreamingServer = (content: string) => _configureNonStreamingServer(content, makeLlamaCPPResponse);
+const configureStreamingServer = (content: string, n: number) => _configureStreamingServer(content, n, makeLlamaCPPResponse);
 
 describe('llama.cpp', async () => {
   let _mockLLMAPI: MockLLMAPI;
@@ -68,7 +73,7 @@ describe('llama.cpp', async () => {
         const abortController = new AbortController();
         const resultFn = vi.fn();
         const [resolveCatchPromise, catchPromise] = makePromise();
-        const catchFn = vi.fn().mockImplementation((err) => {
+        const catchFn = vi.fn().mockImplementation(() => {
           resolveCatchPromise();
         });
         contortionist.execute('prompt', {
@@ -106,7 +111,7 @@ describe('llama.cpp', async () => {
         const abortController = new AbortController();
         const resultFn = vi.fn();
         const [resolveCatchPromise, catchPromise] = makePromise();
-        const catchFn = vi.fn().mockImplementation((err) => {
+        const catchFn = vi.fn().mockImplementation(() => {
           resolveCatchPromise();
         });
         const requests = [
@@ -160,7 +165,7 @@ describe('llama.cpp', async () => {
         let catchCount = 0;
         for (let i = 0; i < 3; i++) {
           resultFns.push(vi.fn());
-          catchFns.push(vi.fn().mockImplementation((err) => {
+          catchFns.push(vi.fn().mockImplementation(() => {
             catchCount += 1;
             if (catchCount === 3) {
               resolveCatchPromise();
@@ -257,7 +262,7 @@ describe('llama.cpp', async () => {
         const abortController = new AbortController();
         const resultFn = vi.fn();
         const [resolveCatchPromise, catchPromise] = makePromise();
-        const catchFn = vi.fn().mockImplementation((err) => {
+        const catchFn = vi.fn().mockImplementation(() => {
           resolveCatchPromise();
         });
         const callback = vi.fn();

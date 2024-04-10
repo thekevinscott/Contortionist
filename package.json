@@ -23,7 +23,7 @@
     "express": "^4.19.2",
     "playwright": "^1.43.0",
     "rimraf": "^5.0.5",
-    "testeroni": "^0.0.16",
+    "testeroni": "^0.0.17",
     "tslib": "^2.6.2",
     "typescript": "^5.3.3",
     "vitest": "^1.4.0",

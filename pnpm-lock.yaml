@@ -31,8 +31,8 @@ importers:
         specifier: ^5.0.5
         version: 5.0.5
       testeroni:
-        specifier: ^0.0.16
-        version: 0.0.16
+        specifier: ^0.0.17
+        version: 0.0.17
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -5770,8 +5770,8 @@ packages:
       minimatch: 3.1.2
     dev: true
 
-  /testeroni@0.0.16:
-    resolution: {integrity: sha512-Hp5Qq03wGbosUGf11bsCNTPUJdRYI41XNkRG7L+mn5v/8G3xO7DLFjtAYF5MNYn2yZZqoA+3h5Qbez882PQ56A==}
+  /testeroni@0.0.17:
+    resolution: {integrity: sha512-JjMU2REFgI3QfJ+bbnnO2rwuT3aJRmydzmKeAMAkGIq9yY/vblb2Rfizg2QrfCHjq0UiBqDzDtPcmSBYXh6qpg==}
     engines: {node: '>=20.0.0'}
     dependencies:
       '@schemastore/package': 0.0.10

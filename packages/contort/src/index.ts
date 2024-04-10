@@ -12,3 +12,7 @@ export type {
 export type {
   LlamaCPPResponse,
 } from './llms/endpoint-llms/llama-cpp/types.js';
+
+export type {
+  LlamafileResponse,
+} from './llms/endpoint-llms/llamafile/types.js';
