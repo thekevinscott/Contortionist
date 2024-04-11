@@ -1,75 +1,66 @@
-import { Tokenizer, } from "./tokenizer.js";
-import GBNF, { ParseState, } from 'gbnf';
-import { Token, VocabTrie, } from "./vocab-trie.js";
-import { Callback, Tensor, } from "./types.js";
+import { Tensor, } from "./types.js";
 import { maskLogits, } from "./mask-logits.js";
-
-// type TokenIds = number[];
-
-interface Args {
-  prompt: string;
-  grammar: string | null;
-  callback?: Callback;
-}
-
-interface Deps {
-  tokenizer: Tokenizer;
-  vocabTrie: VocabTrie;
-}
+import { GrammarParser, } from "./grammar-parser/grammar-parser.js";
+import type { PreTrainedTokenizer, } from "@xenova/transformers";
 
 export type ParseInputTokens = (input_tokens: number[]) => BigInt64Array;
 export class GrammarLogitsProcessor {
-  tokenizer: Tokenizer;
-  vocabTrie: VocabTrie;
+  tokenizer: PreTrainedTokenizer;
   prompt: string;
-  grammar: string | null;
-  parseState?: ParseState;
-  constructor({
-    prompt,
-    grammar,
-  }: Args, {
-    vocabTrie,
-    tokenizer,
-  }: Deps) {
-    this.vocabTrie = vocabTrie;
+  parser: GrammarParser;
+  lastLen: number = 0;
+
+  constructor(prompt: string, parser: GrammarParser, tokenizer: PreTrainedTokenizer) {
+    this.parser = parser;
     this.tokenizer = tokenizer;
-    this.prompt = prompt;
-    this.grammar = grammar;
-    this.parseState = GBNF(this.grammar);
+    this.lastLen = prompt.length;
   }
 
-  getAllowedTokenIds(generated: string) {
-    if (generated.length > 0) {
-      this.parseState = this.parseState.add(generated[generated.length - 1]);
-    }
-
-    const tokens = new Set<Token>();
-    // console.log([...this.parseState,]);
-    for (const rule of this.parseState) {
-      const _tokens = this.vocabTrie.getTokens([rule,]);
-      // if (!_tokens.length) {
-      //   console.warn(`No tokens found for rule: ${JSON.stringify(rule)}`);
-      // }
-      for (const token of _tokens) {
-        tokens.add(token);
-      }
-    }
-    if (tokens.size === 0) {
-      // console.error('No tokens found for any rule in parse state.');
-      throw new Error('No tokens found for any rule in parse state.');
-    }
-    // console.log('acceptable tokens', tokens.map(({ token, }) => token), tokens.map(({ id, }) => id));
-
-    const acceptableTokenIds = Array.from(tokens).map(({ id, }) => id);
-    return acceptableTokenIds;
+  getAllowedTokenIds(decoded: string): Set<number> {
+    const token = decoded.slice(this.lastLen);
+    this.parser.addToken(token);
+    this.lastLen += token.length;
+    return this.parser.getNextTokenIds();
   }
 
   processors = [(inputTokens: number[], logits: Tensor<Float32Array>) => {
+    // if (logits.dims[0] !== this.parser.vocab.size) {
+    //   throw new Error(`logits shape ${JSON.stringify(logits.dims)} does not match vocab size ${this.parser.vocab.size}`);
+    // }
     const decoded = this.tokenizer.decode(inputTokens);
-    const generated = decoded.slice(this.prompt.length);
-
-    const allowedTokenIds = this.getAllowedTokenIds(generated);
-    return maskLogits(logits, allowedTokenIds);
+    const allowedTokenIds = this.getAllowedTokenIds(decoded);
+    const maskedLogits = maskLogits(logits, allowedTokenIds);
+    // interface Foo {
+    //   score: number;
+    //   token: string;
+    //   codePoint: number[];
+    //   tokenId: number;
+    // }
+    // const translatedLogits: Foo[] = [];
+    // const translatedLogitsObj: Record<string, Foo[]> = {};
+    // for (let tokenId = 0; tokenId < maskedLogits.data.length; tokenId++) {
+    //   const score = maskedLogits.data[tokenId];
+    //   // const token = this.parser.vocab.get(tokenId);
+    //   const token = this.tokenizer.decode([tokenId,]);
+    //   if (token !== undefined) {
+    //     const codePoint = token !== "<|endoftext|'>" ? token.split('').map((char) => char.codePointAt(0)) : [];
+    //     const foo = {
+    //       score,
+    //       token,
+    //       codePoint,
+    //       tokenId,
+    //     };
+    //     translatedLogits.push(foo);
+    //     if (!translatedLogitsObj[token]) {
+    //       translatedLogitsObj[token] = [];
+    //     }
+    //     translatedLogitsObj[token].push(foo);
+    //   } else {
+    //     // console.warn('token not found', tokenId);
+    //   }
+    // }
+    // console.log(JSON.stringify(translatedLogits.sort((a, b) => b.score - a.score).slice(0, 5), null, 2), translatedLogitsObj);
+    return maskedLogits;
   },];
 
   [Symbol.iterator]() {

@@ -1,17 +1,17 @@
 import { vi } from 'vitest';
-import { Tensor } from './types.js';
 import { GrammarLogitsProcessor } from './grammar-logits-processor.js';
-import { makeMockTokenizer, } from './__fixtures__/mock-tokenizer.js';
-import { makeMockVocabTrie, } from './__fixtures__/mock-vocab-trie.js';
+import { makeMockPretrainedTokenizer, } from './__mocks__/mock-pretrained-tokenizer.js';
+import { makeMockGrammarParser, } from './__mocks__/mock-grammar-parser.js';
 
-import GBNF from 'gbnf';
-import type * as _GBNF from 'gbnf';
+import type { Tensor } from '@xenova/transformers';
+import { maskLogits } from './mask-logits.js';
+import * as _maskLogits from './mask-logits.js';
 
-vi.mock("gbnf", async () => {
-  const actual = await vi.importActual("gbnf") as typeof _GBNF;
+vi.mock('./mask-logits.js', async () => {
+  const actual = await vi.importActual('./mask-logits.js') as typeof _maskLogits;
   return {
     ...actual,
-    default: vi.fn(),
+    maskLogits: vi.fn().mockImplementation(actual.maskLogits),
   };
 });
 
@@ -21,82 +21,123 @@ describe('LogitsProcessor', () => {
   });
 
   it('initializes', () => {
-    const tokenizer = makeMockTokenizer();
-    const vocabTrie = makeMockVocabTrie();
-    const logitsProcessor = new GrammarLogitsProcessor({
-      prompt: 'foo',
-      grammar: null,
-    }, {
-      tokenizer,
-      vocabTrie,
-    });
+    const tokenizer = makeMockPretrainedTokenizer();
+    const parser = makeMockGrammarParser();
+    const prompt = 'foo';
+    const logitsProcessor = new GrammarLogitsProcessor(prompt, parser, tokenizer);
     expect(logitsProcessor).not.toBe(undefined);
   });
 
-  it('initializes and parses a grammar when one is provided', () => {
-    const tokenizer = makeMockTokenizer();
-    const vocabTrie = makeMockVocabTrie();
-    const grammar = 'grammar';
-    new GrammarLogitsProcessor({
-      prompt: 'foo',
-      grammar,
-    }, {
-      tokenizer,
-      vocabTrie,
+  it('gets allowed token ids', () => {
+    const tokenizer = makeMockPretrainedTokenizer({
+      model: {
+        vocab: ['a', 'b', 'c', 'd', 'e', 'f',],
+      }
     });
-    expect(GBNF).toHaveBeenCalledWith(grammar);
+    const getNextTokenIds = vi.fn().mockImplementation(() => {
+      return new Set([1]);
+    });
+    const addToken = vi.fn();
+    const parser = makeMockGrammarParser({
+      getNextTokenIds,
+      addToken,
+    });
+    const prompt = 'a';
+    const logitsProcessor = new GrammarLogitsProcessor(prompt, parser, tokenizer);
+    expect(logitsProcessor.getAllowedTokenIds(`${prompt}`)).toEqual(new Set([1]));
+    expect(addToken).toHaveBeenCalledWith('');
+    logitsProcessor.getAllowedTokenIds(`${prompt}b`)
+    expect(addToken).toHaveBeenCalledWith('b');
+    logitsProcessor.getAllowedTokenIds(`${prompt}bcd`)
+    expect(addToken).toHaveBeenCalledWith('cd');
+    logitsProcessor.getAllowedTokenIds(`${prompt}bcdef`)
+    expect(addToken).toHaveBeenCalledWith('ef');
   });
 
-  describe('processors', () => {
-    it('returns modified logits for a given grammar', () => {
-      const decode = vi.fn().mockImplementation(() => {
-        return 'bar';
-      });
-      vi.mocked(GBNF).mockImplementation(() => {
-        class MockParseState {
-          *[Symbol.iterator]() {
-            for (let i = 0; i < 3; i++) {
-              yield i;
-            }
-          }
-        }
-
-        return new MockParseState();
-      })
-      const tokenizer = makeMockTokenizer({
-        decode,
-      });
-      const getTokens = vi.fn().mockImplementation(([i]) => {
-        if (i === 1) {
-          return [{ id: i, }];
-        }
-        return [];
-      });
-      const vocabTrie = makeMockVocabTrie({
-        getTokens,
-      });
-      const logitsProcessor = new GrammarLogitsProcessor({
-        prompt: 'foo',
-        grammar: 'grammar',
-      }, {
-        tokenizer,
-        vocabTrie,
-      });
-
-      let returnValue;
-      const logits = {
-        data: [1, 1, 1],
-      } as unknown as Tensor;
-      for (const processor of logitsProcessor) {
-        returnValue = processor([0], logits);
+  it('processors', () => {
+    const vocab = ['a', 'b', 'c', 'd', 'e', 'f',];
+    const decode = vi.fn().mockImplementation((input) => input.map((i) => vocab[i]).join(''));
+    const tokenizer = makeMockPretrainedTokenizer({
+      decode,
+      model: {
+        vocab,
       }
-      expect(returnValue).toEqual({
-        data: [
-          -Infinity,
-          1,
-          -Infinity,
-        ]
-      });
+    });
+    let state = 1;
+    const getNextTokenIds = vi.fn().mockImplementation(() => {
+      return new Set([state++]);
+    });
+    const addToken = vi.fn();
+    const parser = makeMockGrammarParser({
+      getNextTokenIds,
+      addToken,
+    });
+    const prompt = 'a';
+    const logitsProcessor = new GrammarLogitsProcessor(prompt, parser, tokenizer);
+    let returnValue;
+    let logits = {
+      data: Array(vocab.length).fill(1),
+    } as unknown as Tensor;
+    for (const processor of logitsProcessor) {
+      returnValue = processor([0], logits);
+    }
+    expect(decode).toHaveBeenCalledWith([0]);
+    expect(addToken).toHaveBeenCalledWith('');
+    expect(logitsProcessor.lastLen).toBe(1);
+    expect(maskLogits).toHaveBeenCalledWith(logits, new Set([1]));
+    expect(returnValue).toEqual({
+      data: [
+        -Infinity,
+        1,
+        -Infinity,
+        -Infinity,
+        -Infinity,
+        -Infinity,
+      ]
+    });
+
+    // next character: "b"
+    logits = {
+      data: Array(vocab.length).fill(1),
+    } as unknown as Tensor;
+    for (const processor of logitsProcessor) {
+      returnValue = processor([0, 1], logits);
+    }
+    expect(decode).toHaveBeenCalledWith([0, 1]);
+    expect(addToken).toHaveBeenCalledWith('b');
+    expect(logitsProcessor.lastLen).toBe(2);
+    expect(maskLogits).toHaveBeenCalledWith(logits, new Set([2]));
+    expect(returnValue).toEqual({
+      data: [
+        -Infinity,
+        -Infinity,
+        1,
+        -Infinity,
+        -Infinity,
+        -Infinity,
+      ]
+    });
+
+    // next character: "c"
+    logits = {
+      data: Array(vocab.length).fill(1),
+    } as unknown as Tensor;
+    for (const processor of logitsProcessor) {
+      returnValue = processor([0, 1, 2], logits);
+    }
+    expect(decode).toHaveBeenCalledWith([0, 1, 2]);
+    expect(addToken).toHaveBeenCalledWith('c');
+    expect(logitsProcessor.lastLen).toBe(3);
+    expect(maskLogits).toHaveBeenCalledWith(logits, new Set([3]));
+    expect(returnValue).toEqual({
+      data: [
+        -Infinity,
+        -Infinity,
+        -Infinity,
+        1,
+        -Infinity,
+        -Infinity,
+      ]
     });
   });
 });

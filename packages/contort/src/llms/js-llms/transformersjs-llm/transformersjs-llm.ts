@@ -1,29 +1,26 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 import type {
   PreTrainedModel,
+  PreTrainedTokenizer,
   TextGenerationPipeline,
 } from "@xenova/transformers";
 import { GrammarLogitsProcessor, } from "./grammar-logits-processor.js";
-import { Tokenizer, } from "./tokenizer.js";
 import type {
   Beam,
   GenerateFn,
+  TokenizeFn,
   TransformersJSExecuteOptions,
 } from "./types.js";
-import { VocabTrie, } from "./vocab-trie.js";
+import { GrammarParser, } from "./grammar-parser/index.js";
 
-export const DEFAULT_TEMPERATURE = 0.5;
+// export const DEFAULT_TEMPERATURE = 0.5;
+export const DEFAULT_TEMPERATURE = 0.0;
+
 
 export class TransformersJSLLM {
-  pipeline: TextGenerationPipeline;
-  tokenizer: Tokenizer;
-  vocabTrie: VocabTrie;
-
-  constructor(pipeline: TextGenerationPipeline) {
-    this.pipeline = pipeline;
-    this.tokenizer = new Tokenizer(pipeline);
-    this.vocabTrie = new VocabTrie(this.tokenizer);
-    this.vocabTrie.initialize();
+  grammarParser: GrammarParser;
+  constructor(public pipeline: TextGenerationPipeline) {
+    this.grammarParser = new GrammarParser(this.pipeline);
   };
 
   async execute({
@@ -33,10 +30,11 @@ export class TransformersJSLLM {
     callback,
     // signal,
   }: TransformersJSExecuteOptions) {
+    const tokenizer = this.pipeline.tokenizer as PreTrainedTokenizer;
     const callbackFunction = callback ? (beams: Beam[]) => {
       for (const beam of beams) {
         const outputTokenIds = beam.output_token_ids;
-        const decoded = this.tokenizer.decode(outputTokenIds);
+        const decoded = tokenizer.decode(outputTokenIds);
         callback({
           partial: decoded,
           chunk: beam,
@@ -54,14 +52,11 @@ export class TransformersJSLLM {
       // early_stopping: true,
     };
 
-    const logitsProcessor = grammar ? new GrammarLogitsProcessor({
-      prompt,
-      grammar,
-    }, {
-      tokenizer: this.tokenizer,
-      vocabTrie: this.vocabTrie,
-    }) : undefined;
-    const { input_ids, attention_mask, } = this.tokenizer.encode(prompt);
+    if (grammar) {
+      this.grammarParser.initialize(grammar);
+    }
+    const logitsProcessor = grammar ? new GrammarLogitsProcessor(prompt, this.grammarParser, tokenizer) : undefined;
+    const { input_ids, attention_mask, } = (tokenizer as TokenizeFn)(prompt);
 
     // The type definitions for Transformers.js objects appear as anys, which get reported as bugs
     const model = this.pipeline.model as PreTrainedModel;
@@ -70,7 +65,7 @@ export class TransformersJSLLM {
     const outputTokenIds = await (model.generate as GenerateFn)(input_ids, generate_kwargs, logitsProcessor, {
       inputs_attention_mask: attention_mask,
     });
-    const decoded = this.tokenizer.decode(outputTokenIds);
+    const decoded = tokenizer.decode(outputTokenIds[0]);
     return decoded[0];
   };
 };

@@ -17,7 +17,7 @@ export default defineConfig({
     ],
     globals: true,
     typecheck: {
-      tsconfig: './tsconfig.vitest.json'
+      tsconfig: './tests/tsconfig.json'
     },
     setupFiles: [
       path.resolve(__dirname, './test/setup/index.ts'),
