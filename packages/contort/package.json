@@ -2,6 +2,7 @@
   "name": "contort",
   "type": "module",
   "version": "0.0.9",
+  "description": "Control what LLMs can, and can't, say",
   "repository": {
     "type": "git",
     "url": "https://github.com/thekevinscott/contortionist.git"
