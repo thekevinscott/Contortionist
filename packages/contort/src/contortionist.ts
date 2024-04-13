@@ -35,8 +35,8 @@ export class Contortionist<M extends ModelProtocol> {
    * @returns an instance of a Contortionist class.
    */
   constructor({ grammar, model, }: ConstructorOptions<M>) {
-    this.grammar = grammar;
     this.llm = model;
+    this.grammar = grammar;
   }
 
   public set llm(model: ModelDefinition<M> | undefined) {
@@ -73,7 +73,7 @@ export class Contortionist<M extends ModelProtocol> {
     stream,
     callback,
     signal: signal,
-  }: ExternalExecuteOptions<M, S>): Promise<string> {
+  }: ExternalExecuteOptions<M, S> = {}): Promise<string> {
     const _llm = this.llm;
     if (_llm === undefined) {
       throw new Error('You must set an LLM before running.');
