@@ -1,8 +1,7 @@
-import {
-  type TextGenerationPipeline,
-  type PreTrainedTokenizer,
-  type PreTrainedModel,
-} from "@xenova/transformers";
+import { PreTrainedModel } from '@xenova/transformers';
+import { PreTrainedTokenizer } from '@xenova/transformers';
+import { TextGenerationPipeline } from '@xenova/transformers';
+
 import { vi } from 'vitest';
 
 class Callable extends Function {
@@ -45,6 +44,10 @@ class MockPretrainedTokenizer extends Callable {
     // console.log(tokenIds)
     return [tokenIds.map((tokenId) => numberToToken.get(tokenId)).join('')];
   });
+
+  model = {
+    vocab: [],
+  }
 }
 
 class MockPretrainedModel extends Callable {
@@ -68,12 +71,13 @@ class MockPretrainedModel extends Callable {
 export class MockPipeline {
   tokenizer: MockPretrainedTokenizer;
   model: PreTrainedModel;
-  constructor(content: string) {
+  constructor(content: string, vocab: string[]) {
     this.tokenizer = new MockPretrainedTokenizer() as unknown as PreTrainedTokenizer;
+    this.tokenizer.model.vocab = vocab;
     this.model = new MockPretrainedModel(content) as unknown as PreTrainedModel;
   }
 }
 
-export const makeMockPipeline = (content: string) => {
-  return new MockPipeline(content) as unknown as TextGenerationPipeline;
+export const makeMockPipeline = (content: string, vocab: string[]) => {
+  return new MockPipeline(content, vocab) as unknown as TextGenerationPipeline;
 }
