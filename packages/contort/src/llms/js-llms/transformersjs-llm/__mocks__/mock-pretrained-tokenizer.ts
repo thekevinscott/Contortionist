@@ -19,6 +19,19 @@ export interface MockPretrainedTokenizerArgs {
   }
 }
 
+export const makeByteDecoder = (vocab: string[]): ByteDecoder => {
+  return vocab.reduce<ByteDecoder>((_acc, word) => [...word].reduce<ByteDecoder>((acc, char) => {
+    const codePoint = char.codePointAt(0);
+    if (codePoint === undefined) {
+      throw new Error(`Could not get code point for ${char}`);
+    }
+    return {
+      ...acc,
+      [char]: `${codePoint}`, // though they are numbers, they are stored as strings in the byte decoder
+    };
+  }, _acc), {});
+};
+
 export const makeMockPretrainedTokenizer = ({
   tokenize = vi.fn(),
   special_tokens = ['<stop>',],

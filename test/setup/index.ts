@@ -1,7 +1,6 @@
-import { setLogLevel, } from 'testeroni';
+import './matchers/index.js';
 import path from 'path';
 import * as url from 'url';
-import './matchers/index.js';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 

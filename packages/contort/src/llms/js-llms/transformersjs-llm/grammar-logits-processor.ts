@@ -27,6 +27,9 @@ export class GrammarLogitsProcessor {
     // if (logits.dims[0] !== this.parser.vocab.size) {
     //   throw new Error(`logits shape ${JSON.stringify(logits.dims)} does not match vocab size ${this.parser.vocab.size}`);
     // }
+    if (!inputTokens) {
+      throw new Error('No input tokens provided');
+    }
     const decoded = this.tokenizer.decode(inputTokens);
     const allowedTokenIds = this.getAllowedTokenIds(decoded);
     const maskedLogits = maskLogits(logits, allowedTokenIds);

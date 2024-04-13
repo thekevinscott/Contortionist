@@ -26,30 +26,20 @@ class MockTensor {
 
 const tokenToNumber = new Map<string, number>();
 const numberToToken = new Map<number, string>();
-class MockPretrainedTokenizer extends Callable {
-  special_tokens = ['<|endoftext|>'];
 
-  _call = vi.fn().mockImplementation((token: string) => {
-    if (!tokenToNumber.has(token)) {
-      tokenToNumber.set(token, tokenToNumber.size);
+type ByteDecoder = Record<string, string>;
+const makeByteDecoder = (vocab: string[]): ByteDecoder => {
+  return vocab.reduce<ByteDecoder>((_acc, word) => [...word].reduce<ByteDecoder>((acc, char) => {
+    const codePoint = char.codePointAt(0);
+    if (codePoint === undefined) {
+      throw new Error(`Could not get code point for ${char}`);
     }
-    const tokenId = tokenToNumber.get(token);
-    numberToToken.set(tokenId, token);
     return {
-      input_ids: new MockTensor([[tokenId]]),
-    }
-  });
-
-  decode = vi.fn().mockImplementation((tokenIds: number[]) => {
-    // console.log(tokenIds)
-    return [tokenIds.map((tokenId) => numberToToken.get(tokenId)).join('')];
-  });
-
-  model = {
-    vocab: [],
-  }
-}
-
+      ...acc,
+      [char]: `${codePoint}`, // though they are numbers, they are stored as strings in the byte decoder
+    };
+  }, _acc), {});
+};
 class MockPretrainedModel extends Callable {
   constructor(content: string) {
     super();
@@ -68,12 +58,53 @@ class MockPretrainedModel extends Callable {
   });
 }
 
+class MockPretrainedTokenizer extends Callable {
+  special_tokens = ['<|endoftext|>'];
+
+  constructor(words: string[]) {
+    super();
+    this.model.vocab = words;
+    this.decoder.byte_decoder = makeByteDecoder(words);
+  }
+
+  _call = vi.fn().mockImplementation((token: string) => {
+    if (!tokenToNumber.has(token)) {
+      tokenToNumber.set(token, tokenToNumber.size);
+    }
+    const tokenId = tokenToNumber.get(token);
+    numberToToken.set(tokenId, token);
+    return {
+      input_ids: new MockTensor([[tokenId]]),
+    }
+  });
+
+  decode = vi.fn().mockImplementation((tokenIds: number[]) => {
+    if (!tokenIds) {
+      throw new Error('tokenIds is undefined');
+    }
+    return [tokenIds.map((tokenId) => numberToToken.get(tokenId)).join('')];
+  });
+
+  decoder = {
+    byte_decoder: {},
+  }
+
+  getToken = vi.fn().mockImplementation((token: string) => token);
+
+  model = {
+    vocab: [],
+    tokens_to_ids: {
+      get: vi.fn().mockImplementation((token: string) => token),
+    },
+  }
+}
+
+
 export class MockPipeline {
-  tokenizer: MockPretrainedTokenizer;
+  tokenizer: PreTrainedTokenizer;
   model: PreTrainedModel;
   constructor(content: string, vocab: string[]) {
-    this.tokenizer = new MockPretrainedTokenizer() as unknown as PreTrainedTokenizer;
-    this.tokenizer.model.vocab = vocab;
+    this.tokenizer = new MockPretrainedTokenizer(vocab) as unknown as PreTrainedTokenizer;
     this.model = new MockPretrainedModel(content) as unknown as PreTrainedModel;
   }
 }

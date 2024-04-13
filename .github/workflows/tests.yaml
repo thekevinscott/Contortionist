@@ -8,8 +8,6 @@ jobs:
     steps:
       - name: 'Checkout repository'
         uses: actions/checkout@v4
-        with:
-          lfs: 'true'
 
       - uses: actions/setup-node@v4
         with:
@@ -48,8 +46,6 @@ jobs:
     steps:
       - name: 'Checkout repository'
         uses: actions/checkout@v4
-        with:
-          lfs: 'true'
 
       - uses: actions/setup-node@v4
         with:
@@ -143,8 +139,6 @@ jobs:
     steps:
       - name: 'Checkout repository'
         uses: actions/checkout@v4
-        with:
-          lfs: 'true'
 
       - uses: actions/setup-node@v4
         with:
