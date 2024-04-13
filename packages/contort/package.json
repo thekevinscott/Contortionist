@@ -26,7 +26,7 @@
   },
   "wireit": {
     "lint": {
-      "command": "eslint -c .eslintrc.cjs src --ext .ts"
+      "command": "eslint -c ../../.eslintrc.cjs src --ext .ts"
     },
     "build:check": {
       "command": "path-exists ./dist/index.umd.cjs "

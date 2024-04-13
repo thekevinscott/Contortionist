@@ -5,8 +5,8 @@ import { makeMockTextGenerationPipeline as _makeMockTextGenerationPipeline } fro
 
 import GBNF from "gbnf";
 import type { Vocab } from "../types.js";
-import type {
-  ByteDecoder,
+import {
+  makeByteDecoder,
 } from "../../__mocks__/mock-pretrained-tokenizer.js";
 
 const STOP_TOKEN_ID = -999;
@@ -16,16 +16,7 @@ const STOP_TOKEN = '<|endoftext|>';
 // const token = tokenizer.model.vocab[tokenId];
 // const decodedCodePoints: number[] = [...token,].map(char => parseInt(decoder.byte_decoder[char], 10));
 const makeMockTextGenerationPipeline = (vocab: string[]) => {
-  const byte_decoder = vocab.reduce<ByteDecoder>((_acc, word) => [...word].reduce<ByteDecoder>((acc, char) => {
-    const codePoint = char.codePointAt(0);
-    if (codePoint === undefined) {
-      throw new Error(`Could not get code point for ${char}`);
-    }
-    return {
-      ...acc,
-      [char]: `${codePoint}`, // though they are numbers, they are stored as strings in the byte decoder
-    };
-  }, _acc), {});
+  const byte_decoder = makeByteDecoder(vocab);
   return _makeMockTextGenerationPipeline({
     tokenizer: {
       model: {

@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig, } from 'vitest/config';
 import path from 'path';
 
 export default defineConfig({
@@ -17,10 +17,10 @@ export default defineConfig({
     ],
     globals: true,
     typecheck: {
-      tsconfig: './tests/tsconfig.json'
+      tsconfig: './tests/tsconfig.json',
     },
     setupFiles: [
       path.resolve(__dirname, './test/setup/index.ts'),
-    ]
+    ],
   },
 });
