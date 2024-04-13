@@ -52,6 +52,10 @@ module.exports = {
         'plugin:@typescript-eslint/recommended-requiring-type-checking',
       ],
 
+      rules: {
+        '@typescript-eslint/no-unnecessary-type-assertion': 'off',
+      },
+
       "parserOptions": {
         "project": "./tsconfig.json",
         "sourceType": "module"

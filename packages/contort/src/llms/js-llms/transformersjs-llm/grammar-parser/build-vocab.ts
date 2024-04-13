@@ -2,7 +2,7 @@ import type {
   PreTrainedTokenizer,
   TextGenerationPipeline,
 } from "@xenova/transformers";
-import { type Vocab, } from "./types.js";
+import type { Vocab, } from "./types.js";
 import { BidirectionalMap, } from "./bidirectional-map.js";
 
 export const buildVocab = (pipeline: TextGenerationPipeline): BidirectionalMap<number, string> => {

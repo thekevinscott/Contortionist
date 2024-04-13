@@ -3,9 +3,12 @@ import type {
   TextGenerationPipeline,
 } from "@xenova/transformers";
 import { Grammar, } from "../../../../types.js";
-import { buildVocab, } from "./build-vocab.js";
+import { ParseState, } from "gbnf";
 import { Trie, } from "./trie/trie.js";
-import GBNF, { ParseState, } from "gbnf";
+
+import { buildVocab, } from "./build-vocab.js";
+
+import GBNF from "gbnf";
 import type { Vocab, } from "./types.js";
 
 export type GetNextTokenIds = () => Set<number>;
