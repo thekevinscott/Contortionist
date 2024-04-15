@@ -79,6 +79,7 @@ export class TrieNode {
     if (maximumDepth !== undefined && currentDepth > maximumDepth) {
       return tokenIds;
     }
+    console.log([...state,]);
     for (const rule of state) {
       if (rule.type === RuleType.CHAR) {
         if (this.#terminalTokenId !== undefined) {

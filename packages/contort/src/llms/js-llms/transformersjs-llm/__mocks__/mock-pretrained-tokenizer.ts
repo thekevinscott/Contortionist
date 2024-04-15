@@ -53,6 +53,7 @@ export const makeMockPretrainedTokenizer = ({
     getToken = vi.fn();
     model = {
       ...model,
+      convert_tokens_to_ids: vi.fn().mockImplementation((tokens: string[]) => tokens.map(token => model.vocab.indexOf(token))),
       tokens_to_ids: {
         get: vi.fn(),
       },

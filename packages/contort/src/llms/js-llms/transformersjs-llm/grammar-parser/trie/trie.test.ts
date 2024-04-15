@@ -161,7 +161,7 @@ describe('Trie', () => {
         [`root ::= [^a]`, [STOP_TOKEN], 'b'],
         [`root ::= [^ab]`, ['c', 'd'], undefined],
         [`root ::= [^ab]`, [STOP_TOKEN], 'c'],
-        [`root ::= [^abcd]`, [STOP_TOKEN], undefined],
+        [`root ::= [^abc]`, ['d'], undefined],
         [`root ::= [^a-c]`, ['d'], undefined],
         [`root ::= [^a]`, [STOP_TOKEN], 'b'],
         [`root ::= [^a] [^a]?`, [STOP_TOKEN, 'b', 'c', 'd'], 'b'],
@@ -173,6 +173,16 @@ describe('Trie', () => {
         const trie = new Trie(vocab, STOP_TOKEN_ID, pipeline);
         const parseState = GBNF(grammar, initial);
         expect(getWordsOfIds(words, trie.getTokens(parseState))).toEqual(new Set(expected));
+      });
+
+      test('it throws if no valid tokens exist', () => {
+        const grammar = `root ::= [^abcd]`;
+        const words = ['a', 'b', 'c', 'd'];
+        const pipeline = makeMockTextGenerationPipeline(words);
+        const vocab = getVocab(words);
+        const trie = new Trie(vocab, STOP_TOKEN_ID, pipeline);
+        const parseState = GBNF(grammar);
+        expect(() => trie.getTokens(parseState)).toThrow();
       });
 
     });
