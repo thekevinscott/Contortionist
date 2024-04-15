@@ -35,6 +35,7 @@ export class TrieNode {
     const decodedCodePoints: number[] = [...token,].map(char => {
       const decodedByte = decoder.byte_decoder[char];
       if (decodedByte === undefined) {
+        // return char.codePointAt(0);
         throw new Error(`Could not find decoded byte for ${char}`);
       }
       return parseInt(decodedByte, 10);
@@ -78,6 +79,7 @@ export class TrieNode {
     if (maximumDepth !== undefined && currentDepth > maximumDepth) {
       return tokenIds;
     }
+    console.log([...state,]);
     for (const rule of state) {
       if (rule.type === RuleType.CHAR) {
         if (this.#terminalTokenId !== undefined) {

@@ -21,7 +21,8 @@ export class Trie {
   getTokens = (state: ParseState, maximumDepth?: number) => {
     const tokenIds = this.root.getTokens(state, { maximumDepth, });
     if (tokenIds.size === 0) {
-      return new Set([this.root.stopTokenId,]);
+      throw new Error('Grammar is incorrect; no rule was found.');
+      // return new Set([this.root.stopTokenId,]);
     }
     return tokenIds;
   };
