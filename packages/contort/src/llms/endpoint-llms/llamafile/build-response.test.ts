@@ -1,9 +1,9 @@
 import { buildResponse } from './build-response.js';
 import { vi } from 'vitest';
-import { parse, } from "./parse.js";
-import type * as _parse from './parse.js';
 import { LlamafileResponse } from './types.js';
 import { makeMockNonStreamingLlamafileResponse, makeMockStreamingLlamafileResponse, } from './__fixtures__/make-llamafile-response.js';
+import { parse, } from "./parse.js";
+import type * as _parse from './parse.js';
 
 vi.mock("./parse.js", async () => {
   const actual = await vi.importActual("./parse.js") as typeof _parse;

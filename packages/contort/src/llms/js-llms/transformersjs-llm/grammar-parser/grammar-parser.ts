@@ -25,7 +25,7 @@ export class GrammarParser {
     this.vocab = buildVocab(this.pipeline);
     this.trie = new Trie(
       this.vocab,
-      tokenizer.model.tokens_to_ids.get(tokenizer.getToken('eos_token')),
+      tokenizer.model.convert_tokens_to_ids([tokenizer.getToken('eos_token'),])[0],
       this.pipeline,
     );
   }
