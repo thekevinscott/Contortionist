@@ -60,13 +60,6 @@ export interface TransformersJSExecuteOptions extends Omit<InternalExecuteOption
   callback: Callback;
 }
 
-// export interface TransformersJSCallOpts {
-//   prompt: string;
-//   n_predict: number;
-//   grammar: string;
-//   stream: boolean;
-// }
-
 export interface TransformersJSError {
   code: number;
   message: string;

@@ -33,13 +33,11 @@ export interface InternalExecuteOptions {
   stream: boolean;
   signal: AbortSignal;
 }
-export interface ExternalExecuteOptions<M extends ModelProtocol, S extends boolean> {
-  n?: number;
+export interface ExternalExecuteOptions<M extends ModelProtocol, S extends boolean> extends Record<string, unknown> {
   stream?: S;
   callback?: Callback<M, S>;
   signal?: AbortSignal;
 }
-export const DEFAULT_N = 20;
 
 export interface ConstructorOptions<M extends ModelProtocol | undefined = undefined> {
   grammar?: Grammar;
@@ -68,7 +66,6 @@ export interface ILLM {
     prompt: Prompt<ModelProtocol>;
     stream: boolean;
     callback?: Callback<ModelProtocol, S>;
-    n: number;
     grammar?: string;
     signal: AbortSignal;
   }): Promise<string>;
