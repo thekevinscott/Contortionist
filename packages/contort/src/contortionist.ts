@@ -1,6 +1,5 @@
 import { getLLM, } from "./llms/index.js";
 import {
-  DEFAULT_N,
   type ConstructorOptions,
   type ExternalExecuteOptions,
   type Grammar,
