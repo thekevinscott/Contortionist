@@ -8,7 +8,6 @@ export type LlamaCPPPrompt = string;
 
 export interface LlamaCPPCallOpts {
   prompt: string;
-  n_predict: number;
   grammar: string;
   stream: boolean;
 }

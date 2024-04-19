@@ -16,11 +16,11 @@ export class LlamafileLLM implements ILLM {
 
   async execute<S extends boolean>({
     prompt,
-    n,
     grammar,
     stream,
     callback: _callback,
     signal,
+    ...rest
   }: LlamafileExecuteOptions<S>) {
     let partial = '';
     const callback = (chunk: string) => {
@@ -37,8 +37,8 @@ export class LlamafileLLM implements ILLM {
       callback,
       parseChunk,
     }, {
+      ...rest,
       messages: getMessages(prompt),
-      n,
       grammar: !grammar ? undefined : grammar,
       stream,
     });

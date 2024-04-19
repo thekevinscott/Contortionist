@@ -26,4 +26,5 @@ describe('TransformersJSLLM', () => {
     const llm = new TransformersJSLLM(mockPipeline);
     expect(llm.pipeline).toBe(mockPipeline);
   });
+  // max_new_tokens: n,
 });

@@ -104,7 +104,7 @@ describe('llama.cpp', async () => {
       });
       const callback = vi.fn();
       const result = await contortionist.execute('prompt', {
-        n,
+        n_predict: n,
         callback,
       });
       expect(result).toEqual(content);

@@ -98,7 +98,7 @@ describe('llama.cpp', () => {
         }))}`);
       });
       const result = await contortionist.execute('prompt', {
-        n: 10,
+        n_predict: 10,
       });
       expect(result).toEqual(content);
     });
@@ -128,7 +128,7 @@ describe('llama.cpp', () => {
         resolveCatchPromise();
       });
       contortionist.execute('prompt', {
-        n: 10,
+        n_predict: 10,
         signal: abortController.signal,
       }).then(resultFn).catch(catchFn);
       await serverCalledPromise;
@@ -167,14 +167,14 @@ describe('llama.cpp', () => {
       });
       const requests = [
         contortionist.execute('prompt1', {
-          n: 10,
+          n_predict: 10,
         }),
         contortionist.execute('prompt2', {
-          n: 10,
+          n_predict: 10,
         }),
       ];
       contortionist.execute('aborted prompt', {
-        n: 10,
+        n_predict: 10,
         signal: abortController.signal,
       }).then(resultFn).catch(catchFn);
       await serverCalledPromise;

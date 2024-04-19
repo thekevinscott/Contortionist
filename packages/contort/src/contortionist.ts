@@ -69,7 +69,6 @@ export class Contortionist<M extends ModelProtocol> {
    * ```
    */
   async execute<S extends boolean>(prompt: Prompt<M>, {
-    n = DEFAULT_N,
     stream,
     callback,
     signal: signal,
@@ -84,7 +83,6 @@ export class Contortionist<M extends ModelProtocol> {
     const llm = await _llm;
     return llm.execute({
       prompt,
-      n,
       stream: (callback && stream === undefined) ? true : !!stream,
       callback,
       grammar: this.grammar,

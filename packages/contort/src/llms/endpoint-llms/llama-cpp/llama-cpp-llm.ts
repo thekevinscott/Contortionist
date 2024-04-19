@@ -13,11 +13,11 @@ export class LlamaCPPLLM implements ILLM {
 
   async execute<S extends boolean>({
     prompt,
-    n,
     stream,
     callback: _callback,
     grammar,
     signal,
+    ...rest
   }: LlamaCPPExecuteOptions<S>) {
     let partial = '';
     const callback = (chunk: string) => {
@@ -34,8 +34,8 @@ export class LlamaCPPLLM implements ILLM {
       callback,
       parseChunk,
     }, {
+      ...rest,
       prompt,
-      n_predict: n,
       grammar,
       stream,
     });

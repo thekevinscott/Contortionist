@@ -25,10 +25,10 @@ export class TransformersJSLLM {
 
   async execute({
     prompt,
-    n,
     grammar,
     callback,
     // signal,
+    ...rest
   }: TransformersJSExecuteOptions) {
     const tokenizer = this.pipeline.tokenizer as PreTrainedTokenizer;
     const callbackFunction = callback ? (beams: Beam[]) => {
@@ -43,8 +43,7 @@ export class TransformersJSLLM {
     } : undefined;
     const generate_kwargs = {
       temperature: DEFAULT_TEMPERATURE,
-      // ...opts,
-      max_new_tokens: n,
+      ...rest,
 
       callback_function: callbackFunction,
       // num_beams: 5,
