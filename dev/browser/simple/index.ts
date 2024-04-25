@@ -28,7 +28,6 @@ const button = document.getElementById('submit');
 const input = document.getElementById('input') as HTMLTextAreaElement;
 const grammarEditor = document.getElementById('grammar');
 const output = document.getElementById('output');
-const outputNoGrammar = document.getElementById('output-no-grammar');
 const selectGrammar = document.getElementById('grammar-selector') as HTMLSelectElement;
 const selectModel = document.getElementById('model-selector') as HTMLSelectElement;
 
@@ -69,7 +68,7 @@ Object.keys(models).forEach(model => {
   const option = document.createElement('option');
   option.value = model;
   option.innerText = model;
-  if (model === 'Xenova/codegen-350M-mono') {
+  if (model === 'llama.cpp') {
     option.selected = true;
   }
   selectModel.appendChild(option);
@@ -82,76 +81,51 @@ selectGrammar.onchange = () => {
   abortController.abort();
 };
 
+let generating = false;
+let contortionist: Contortionist<any>;
 form.onsubmit = async (e) => {
   e.preventDefault();
-  await synthesize(input.value + "\n");
+  if (generating) {
+    contortionist?.abort();
+  } else {
+    await synthesize(input.value + "\n");
+  }
 };
 
 const loadedModels = new Map();
 
-const n = 150;
+const n = 10;
 
 const synthesize = async (prompt: string) => {
+  generating = true;
   if (!loadedModels.get(selectModel.value)) {
     loadedModels.set(selectModel.value, await models[selectModel.value]());
   }
   const model = loadedModels.get(selectModel.value);
   console.log('Synthesize!');
-  button.setAttribute('disabled', '');
-  await Promise.all([
-    (async () => {
-      const contortionist = new Contortionist({
-        model,
-      });
+  button.innerText = 'Abort';
+  contortionist = new Contortionist({
+    model,
+  });
 
-      try {
-        contortionist.grammar = grammarEditor.value;
+  try {
+    contortionist.grammar = grammarEditor.value;
 
-        await contortionist.execute(prompt, {
-          n,
-          stream: true,
-          callback: ({ partial, chunk, }) => {
-            console.log('grammar', partial);
-            output.textContent = partial;
-          },
-        });
-        console.log('complete, grammar');
-      } catch (err) {
-        console.error(err);
-      }
-    })(),
-    (async () => {
-      const contortionist = new Contortionist({
-        model,
-      });
-      try {
-        await contortionist.execute(prompt, {
-          n,
-          stream: true,
-          callback: ({ partial, chunk, }) => {
-            console.log('nogrammar', partial);
-            outputNoGrammar.textContent = partial;
-          },
-        });
-        console.log('complete, no grammar');
-      } catch (err) {
-        console.error(err);
-      }
-    })(),
-  ]);
+    await contortionist.execute(prompt, {
+      n_predict: n,
+      stream: true,
+      callback: ({ partial, chunk, }) => {
+        // console.log('grammar', partial);
+        output.textContent = partial;
+      },
+    });
+    console.log('complete, grammar');
+  } catch (err) {
+    console.error(err);
+  }
   console.log('done synthesizing!');
 
-  button.removeAttribute('disabled');
+  generating = false;
   abortController = new AbortController();
 
 };
-
-synthesize(input.value + '\n');
-
-// grammarEditor.value = `
-// root ::= item+
-
-// # Excludes various line break characters
-// item ::= "def " [a-zA-z]+ "(" arg ("," arg)* "):" \n
-// arg ::= [a-zA-z]+
-// `;
