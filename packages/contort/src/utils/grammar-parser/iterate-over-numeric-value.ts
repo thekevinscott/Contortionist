@@ -1,6 +1,6 @@
 import type { Range, } from "gbnf";
 
-export function* iterateOverValue(value: number | Range): IterableIterator<number> {
+export function* iterateOverNumericValue(value: number | Range): IterableIterator<number> {
   if (typeof value === 'number') {
     yield value;
   } else {

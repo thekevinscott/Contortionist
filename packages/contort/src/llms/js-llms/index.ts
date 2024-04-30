@@ -1,1 +1,1 @@
-export { TransformersJSLLM, } from './transformersjs-llm/index.js';
+export { TransformersJSLLM, } from './transformersjs/index.js';

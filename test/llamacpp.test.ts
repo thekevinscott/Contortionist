@@ -303,7 +303,7 @@ describe('llama.cpp', () => {
       expect(callback).toHaveBeenNthCalledWith(3, { partial: 'abc', chunk: makeLlamaCPPResponse({ content: 'c' }) });
     });
 
-    test.only('it should be able to abort in the middle of a streaming request', async () => {
+    test('it should be able to abort in the middle of a streaming request', async () => {
       const n = 3;
       mockLLMAPI = new MockLLMAPI();
       const content = 'abc';

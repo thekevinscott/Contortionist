@@ -1,13 +1,12 @@
 import { ParseState, } from "gbnf";
 import { RuleType, } from "gbnf";
 
-import { iterateOverValue, } from "./iterate-over-value.js";
-import type { PreTrainedTokenizer, } from "@xenova/transformers";
-
+import { iterateOverNumericValue, } from "./iterate-over-numeric-value.js";
+import { GetDecodedByteForChar, } from "./types.js";
 export const customInspectSymbol = Symbol.for('nodejs.util.inspect.custom');
 
-export class TrieNode {
-  #nodes = new Map<number, TrieNode>();
+export class GrammarParserNode {
+  #nodes = new Map<number, GrammarParserNode>();
   #childTokenIds = new Set<number>();
   #terminalTokenId?: number;
   char?: string;
@@ -18,8 +17,8 @@ export class TrieNode {
     this.char = char;
   }
 
-  get = (codePoint: number): TrieNode | undefined => this.#nodes.get(codePoint);
-  *getNot(excluded: Set<number>): IterableIterator<TrieNode> {
+  get = (codePoint: number): GrammarParserNode | undefined => this.#nodes.get(codePoint);
+  *getNot(excluded: Set<number>): IterableIterator<GrammarParserNode> {
     for (const [key, value,] of this.#nodes) {
       if (!excluded.has(key)) {
         yield value;
@@ -29,23 +28,19 @@ export class TrieNode {
 
   get size() { return this.#nodes.size; }
 
-  add = (tokenizer: PreTrainedTokenizer, tokenId: number, pos = 0) => {
-    const decoder = tokenizer.decoder as ByteLevelDecoder;
-    const token = tokenizer.model.vocab[tokenId];
-    const decodedCodePoints: number[] = [...token,].map(char => {
-      const decodedByte = decoder.byte_decoder[char];
-      if (decodedByte === undefined) {
-        // return char.codePointAt(0);
-        throw new Error(`Could not find decoded byte for ${char}`);
-      }
-      return parseInt(decodedByte, 10);
-    });
+  add = (
+    tokenId: number,
+    token: string,
+    getDecodedByteForChar: GetDecodedByteForChar,
+    pos = 0,
+  ) => {
+    const decodedCodePoints = [...token,].map(getDecodedByteForChar);
 
     const char = token[pos];
     const decodedCodePoint = decodedCodePoints[pos];
     let node = this.#nodes.get(decodedCodePoint);
     if (!node) {
-      node = new TrieNode(this.stopTokenId, char);
+      node = new GrammarParserNode(this.stopTokenId, char);
       this.#nodes.set(decodedCodePoint, node);
     }
 
@@ -53,7 +48,7 @@ export class TrieNode {
       node.#terminalTokenId = tokenId;
     } else {
       node.#childTokenIds.add(tokenId);
-      node.add(tokenizer, tokenId, pos + 1);
+      node.add(tokenId, token, getDecodedByteForChar, pos + 1);
     }
   };
 
@@ -79,14 +74,14 @@ export class TrieNode {
     if (maximumDepth !== undefined && currentDepth > maximumDepth) {
       return tokenIds;
     }
-    console.log([...state,]);
+    // console.log([...state,]);
     for (const rule of state) {
       if (rule.type === RuleType.CHAR) {
         if (this.#terminalTokenId !== undefined) {
           tokenIds.add(this.#terminalTokenId);
         }
         for (const value of rule.value) {
-          for (const codePoint of iterateOverValue(value)) {
+          for (const codePoint of iterateOverNumericValue(value)) {
             const char = String.fromCodePoint(codePoint);
             // const node = this.get(char);
             const node = this.get(codePoint);
@@ -101,7 +96,7 @@ export class TrieNode {
       } else if (rule.type === RuleType.CHAR_EXCLUDE) {
         const excluded = new Set<number>();
         for (const value of rule.value) {
-          for (const codePoint of iterateOverValue(value)) {
+          for (const codePoint of iterateOverNumericValue(value)) {
             // const excludedChar = String.fromCodePoint(codePoint);
             // excluded.add(excludedChar);
             excluded.add(codePoint);
@@ -128,7 +123,3 @@ export class TrieNode {
     return tokenIds;
   };
 }
-
-type ByteLevelDecoder = PreTrainedTokenizer['decoder'] & {
-  byte_decoder: Record<string, string>;
-};

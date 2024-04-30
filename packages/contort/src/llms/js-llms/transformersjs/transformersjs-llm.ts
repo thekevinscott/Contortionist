@@ -11,16 +11,38 @@ import type {
   TokenizeFn,
   TransformersJSExecuteOptions,
 } from "./types.js";
-import { GrammarParser, } from "./grammar-parser/index.js";
+import { GrammarParser, } from "../../../utils/grammar-parser/index.js";
+import { GetDecodedByteForChar, GetToken, } from "../../../utils/grammar-parser/types.js";
 
 // export const DEFAULT_TEMPERATURE = 0.5;
 export const DEFAULT_TEMPERATURE = 0.0;
 
+type ByteLevelDecoder = PreTrainedTokenizer['decoder'] & {
+  byte_decoder: Record<string, string>;
+};
 
 export class TransformersJSLLM {
   grammarParser: GrammarParser;
   constructor(public pipeline: TextGenerationPipeline) {
-    this.grammarParser = new GrammarParser(this.pipeline);
+    const tokenizer = pipeline.tokenizer as PreTrainedTokenizer;
+    const stopTokenId = tokenizer.model.convert_tokens_to_ids([tokenizer.getToken('eos_token'),])[0];
+    const vocabSize = tokenizer.model.vocab.length;
+    const decoder = tokenizer.decoder as ByteLevelDecoder;
+    const getDecodedByteForChar: GetDecodedByteForChar = (char: string) => {
+      const decodedByte = decoder.byte_decoder[char];
+      if (decodedByte === undefined) {
+        throw new Error(`Could not find decoded byte for ${char}`);
+      }
+      return parseInt(decodedByte, 10);
+    };
+    const getToken: GetToken = tokenId => tokenizer.model.vocab[tokenId];
+
+    this.grammarParser = new GrammarParser({
+      vocabSize,
+      stopTokenId,
+      getToken,
+      getDecodedByteForChar,
+    });
   };
 
   async execute({
