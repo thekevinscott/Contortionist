@@ -1,6 +1,3 @@
-import type {
-  TextGenerationPipeline,
-} from "@xenova/transformers";
 import {
   type LlamaCPPPrompt,
   type LlamaCPPResponse,

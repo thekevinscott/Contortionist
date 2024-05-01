@@ -188,16 +188,6 @@ importers:
         specifier: ^5.3.3
         version: 5.4.2
 
-  tmp/node:
-    dependencies:
-      contort:
-        specifier: workspace:*
-        version: link:../../packages/contort
-    devDependencies:
-      tslib:
-        specifier: 2.6.1
-        version: 2.6.1
-
 packages:
 
   '@aashutoshrathi/word-wrap@1.2.6':
@@ -3324,9 +3314,6 @@ packages:
         optional: true
       '@swc/wasm':
         optional: true
-
-  tslib@2.6.1:
-    resolution: {integrity: sha512-t0hLfiEKfMUoqhG+U1oid7Pva4bbDPHYfJNiB7BiIjRkj1pyC++4N3huJfqY6aRH6VTB0rvtzQwjM4K6qpfOig==}
 
   tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
@@ -7119,8 +7106,6 @@ snapshots:
       typescript: 5.4.2
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
-
-  tslib@2.6.1: {}
 
   tslib@2.6.2: {}
 
