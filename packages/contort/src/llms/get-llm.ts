@@ -1,8 +1,10 @@
 import {
-  type ModelDefinition,
-  type ModelProtocol,
+  isProtocol,
   modelIsProtocolDefinition,
-  ModelProtocolDefinition,
+} from "../type-guards.js";
+import type {
+  ModelDefinition,
+  ModelProtocol,
 } from "../types.js";
 import {
   LlamafileLLM,
@@ -19,9 +21,10 @@ type ModelToLLMMap = {
   [K in keyof typeof MODELS]: InstanceType<typeof MODELS[K]>;
 };
 
-export async function getLLM<M extends ModelProtocol>(model: ModelDefinition<M>): Promise<ModelToLLMMap[M]> {
+export async function getLLM<M extends ModelProtocol>(_model: ModelDefinition<M>): Promise<ModelToLLMMap[M]> {
+  const model = await _model;
   if (!modelIsProtocolDefinition(model)) {
-    return new TransformersJSLLM(await model) as ModelToLLMMap[M];
+    return new TransformersJSLLM(model) as ModelToLLMMap[M];
   }
   if (isProtocol('llama.cpp', model)) {
     return new LlamaCPPLLM(model.endpoint) as ModelToLLMMap[M];
@@ -31,7 +34,3 @@ export async function getLLM<M extends ModelProtocol>(model: ModelDefinition<M>)
   }
   throw new Error(`Unsupported model protocol: ${model.protocol}`);
 };
-
-function isProtocol<M extends ModelProtocol>(protocol: M, model: ModelProtocolDefinition<ModelProtocol>): model is ModelProtocolDefinition<M> {
-  return model.protocol === protocol;
-}

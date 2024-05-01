@@ -19,29 +19,28 @@
     "copy:package-files": "wireit",
     "lint": "wireit",
     "test": "vitest",
+    "clean": "wireit",
     "build": "wireit",
-    "build:check": "wireit",
-    "build:esm": "wireit",
-    "build:umd": "wireit"
+    "build:check": "wireit"
   },
   "wireit": {
+    "clean": {
+      "command": "rimraf ./dist"
+    },
     "lint": {
       "command": "eslint -c ../../.eslintrc.cjs src --ext .ts"
     },
     "build:check": {
       "command": "path-exists ./dist/index.umd.cjs "
     },
-    "build:esm": {
-      "command": "tsc"
-    },
-    "build:umd": {
-      "command": "vite build"
-    },
     "copy:package-files": {
       "command": "cp ../../README.md ./README.md && cp ../../LICENSE ./LICENSE"
     },
     "build": {
-      "command": "rimraf ./dist && pnpm build:umd && pnpm build:esm && pnpm copy:package-files && pnpm build:check",
+      "command": "vite build && pnpm copy:package-files && pnpm build:check",
+      "dependencies": [
+        "clean"
+      ],
       "files": [
         "../../README.md",
         "../../LICENSE",
@@ -70,7 +69,6 @@
     "grammar"
   ],
   "dependencies": {
-    "@xenova/transformers": "^2.16.0",
     "gbnf": "^0.1.4"
   },
   "devDependencies": {
@@ -78,6 +76,8 @@
     "@types/jest": "^29.5.12",
     "@typescript-eslint/eslint-plugin": "^7.3.1",
     "@vitest/coverage-istanbul": "^1.4.0",
+    "@vitest/coverage-v8": "^1.5.3",
+    "@xenova/transformers": "^2.16.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "path-exists-cli": "^2.0.0",
@@ -90,6 +90,7 @@
     "typescript": "^5.3.3",
     "vite": "^5.1.5",
     "vite-plugin-dts": "^3.7.3",
+    "vite-plugin-externalize-deps": "^0.8.0",
     "vitest": "^1.4.0",
     "wireit": "^0.14.4"
   }

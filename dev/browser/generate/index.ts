@@ -1,9 +1,9 @@
 import {
-  pipeline, env, PreTrainedTokenizer,
+  pipeline,
+  env,
 } from '@xenova/transformers';
 env.allowRemoteModels = true;
 env.allowLocalModels = false;
-// import { PreTrainedModel, TextGenerationConfig, TextGenerationPipeline, } from "@xenova/transformers";
 import Contortionist from '../../../packages/contort/src/index.js';
 import '@vanillawc/wc-monaco-editor';
 import { ModelDefinition, ModelProtocol, } from 'contort';

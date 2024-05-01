@@ -1,7 +1,9 @@
 import { Callable } from './callable.js';
 
 import { vi } from 'vitest';
-import type { PreTrainedTokenizer, } from '@xenova/transformers';
+import type {
+  PreTrainedTokenizer,
+} from '@xenova/transformers';
 import type {
   TokenizeFn,
 } from '../types.js';

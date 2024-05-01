@@ -1,7 +1,9 @@
 import { Tensor, } from "./types.js";
 import { maskLogits, } from "../../../utils/mask-logits.js";
 import { GrammarParser, } from "../../../utils/grammar-parser/grammar-parser.js";
-import type { PreTrainedTokenizer, } from "@xenova/transformers";
+import type {
+  PreTrainedTokenizer,
+} from "@xenova/transformers";
 
 export type ParseInputTokens = (input_tokens: number[]) => BigInt64Array;
 export class GrammarLogitsProcessor {

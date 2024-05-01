@@ -1,4 +1,5 @@
 import { defineConfig, } from 'vitest/config';
+import { externalizeDeps, } from 'vite-plugin-externalize-deps';
 import dts from 'vite-plugin-dts';
 
 export default defineConfig({
@@ -13,14 +14,20 @@ export default defineConfig({
     target: 'esnext',
     minify: true,
   },
-  plugins: [dts(),],
+  plugins: [
+    externalizeDeps({
+      except: [
+        'gbnf',
+      ],
+    }),
+    dts(),
+  ],
   test: {
     coverage: {
-      provider: 'istanbul', // or 'v8'
+      provider: 'v8',
     },
     include: ['**/*.test.ts',],
     globals: true,
-    // ts
     typecheck: {
       tsconfig: './tsconfig.test.json',
     },

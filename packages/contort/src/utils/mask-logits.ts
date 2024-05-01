@@ -1,4 +1,6 @@
-import type { TypedArray, } from "@xenova/transformers";
+import type {
+  TypedArray,
+} from "@xenova/transformers";
 
 export function maskLogits<T extends TypedArray>(logits: T, ids: Set<number>) {
   const values = new Map<number, number>();
