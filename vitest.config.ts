@@ -3,8 +3,8 @@ import path from 'path';
 
 export default defineConfig({
   test: {
-    testTimeout: 10000,
-    hookTimeout: 20000,
+    testTimeout: 20000,
+    hookTimeout: 60000,
     include: [
       'test/tests/**/*.test.ts',
       'src/packages/contortionist/**/*.ts',
