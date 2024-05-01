@@ -6,3 +6,4 @@ env
 .parcel-cache
 .mypy-cache
 tmp
+vite.config.ts.timestamp-*

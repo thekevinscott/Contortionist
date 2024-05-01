@@ -1,18 +1,18 @@
 import { getLLM, } from "./llms/index.js";
-import {
-  type ConstructorOptions,
-  type ExternalExecuteOptions,
-  type Grammar,
-  type ILLM,
-  type ModelDefinition,
-  type ModelProtocol,
-  type Prompt,
+import type {
+  ConstructorOptions,
+  ExternalExecuteOptions,
+  Grammar,
+  LLMInterface,
+  ModelDefinition,
+  ModelProtocol,
+  Prompt,
 } from "./types.js";
 
 export class Contortionist<M extends ModelProtocol> {
   grammar?: Grammar;
   // private _llm?: ChosenLLM<M>;
-  #llm?: Promise<ILLM>;
+  #llm?: Promise<LLMInterface>;
 
   /**
    * @hidden
@@ -39,9 +39,9 @@ export class Contortionist<M extends ModelProtocol> {
   }
 
   public set llm(model: ModelDefinition<M> | undefined) {
-    this.#llm = (model ? getLLM<M>(model) : undefined) as Promise<ILLM> | undefined;
+    this.#llm = (model ? getLLM<M>(model) : undefined) as Promise<LLMInterface> | undefined;
   }
-  public get llm(): Promise<ILLM> {
+  public get llm(): Promise<LLMInterface> {
     if (this.#llm === undefined) {
       throw new Error('You must set an LLM before running.');
     }
@@ -71,6 +71,7 @@ export class Contortionist<M extends ModelProtocol> {
     stream,
     callback,
     signal: signal,
+    llmOpts,
   }: ExternalExecuteOptions<M, S> = {}): Promise<string> {
     const _llm = this.llm;
     if (_llm === undefined) {
@@ -86,6 +87,7 @@ export class Contortionist<M extends ModelProtocol> {
       callback,
       grammar: this.grammar,
       signal: this.#getSignal(signal),
+      llmOpts,
     });
   };
 

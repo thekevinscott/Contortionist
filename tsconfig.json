@@ -1,8 +1,11 @@
 {
   "compilerOptions": {
+    "moduleResolution": "Bundler",
+    "module": "ESNext",
     "target": "esnext",
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
+    "skipLibCheck": true,
+    // "module": "nodenext",
+    // "moduleResolution": "nodenext",
     "resolveJsonModule": true,
     "sourceMap": true
   }
