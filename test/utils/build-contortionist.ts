@@ -21,5 +21,9 @@ export const buildContortionist = async () => {
     const files = await readdir(CONTORT_DIR);
     throw new Error(`Dist folder for contort does not exist: ${JSON.stringify(files, null, 2)}`);
   }
+  if (!(await exists(path.resolve(DIST, 'index.js')))) {
+    const files = await readdir(DIST);
+    throw new Error(`./dist/index.js for contort does not exist: ${JSON.stringify(files, null, 2)}`);
+  }
 };
 
